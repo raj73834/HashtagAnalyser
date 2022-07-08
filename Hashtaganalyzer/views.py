@@ -20,7 +20,7 @@ def index(request):
 
     # data = JSONParser().parse(request)
     # k=data['hastag']
-    k="#photography"
+    k="#moj"
     # data = JSONParser().parse(request)
     # k=data['hastag']
     driver=open_insta()

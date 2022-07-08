@@ -1,3 +1,4 @@
+import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -19,6 +20,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 # %matplotlib inline
 import re
+import os
 
 
 # def load_insta():
@@ -389,12 +391,12 @@ def get_common(keyword, hash=None, mention=None):
 
     return mention_list
 
-
+def read_csv(keyword):
 #  load csv
-data = pd.read_csv("photography testing-28.csv")
-data
+    data = pd.read_csv(keyword[1:]+" testing-07.csv")
+    return data
 
-def get_langchart():
+def get_langchart(data):
     # Language charrt
     x = data['language'].value_counts()
     # x.plot.bar()
@@ -517,9 +519,14 @@ def get_RelatedHashtag():
     wordcloud = WordCloud(width=1000,height=500,colormap='gist_rainbow_r', scale=5,prefer_horizontal=0.50,max_words=400,
                         collocations=True, background_color='black',relative_scaling=0.7).generate(text)
     # plot the wordcloud object
-    plt.figure(figsize=(13,8), facecolor='k')
+    # plt.figure(figsize=(13,8), facecolor='k')
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
     plt.tight_layout(pad=0)
+    # path="Hastag/wordcloud"
+    # import glob
+    # removing_files = glob.glob(path+'/*.png')
+    # for i in removing_files:
+    #      os.remove(i)
     plt.savefig('Related_Hash.png', dpi = 300)
-    plt.show()
+    # plt.show()
