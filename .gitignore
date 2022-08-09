@@ -1,2 +1,4 @@
 *.csv
 db.sqlite3
+__pycache__/
+cache/
