@@ -1,13 +1,14 @@
+from email import message
 from xxlimited import new
 from django.shortcuts import render
 from .operation import *
 from django.http import HttpResponse,response
-from django.shortcuts import render,HttpResponseRedirect,Http404
+from django.shortcuts import render,HttpResponseRedirect,Http404,redirect
 from rest_framework.parsers import JSONParser
 from django.http import HttpResponse,JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template import loader
-import json
+from django.contrib.auth.models import User
 
 # from .models import ItemsModel
 # from .serializers import ItemSerializer
@@ -19,8 +20,17 @@ import json
 
 #     return Response("Hello world!",result)
 @csrf_exempt
-def signup(request):
-    return render(request,'auth-signup-basic.html')
+def handlesignup(request):
+    if request.method == "POST":
+        useremail = request.get['useremail']
+        username = request.get['username']
+        password = request.get['password-input']
+        myuser = User.object.create_user(email=useremail, username=username, password=password)
+        myuser.save()
+        message.success(request,"your account has been created successfully")
+        return render(request, "dashboard-crm.html")
+    else:
+        return render(request, "auth-signup-basic.html")
 
 @csrf_exempt
 def signin(request):
