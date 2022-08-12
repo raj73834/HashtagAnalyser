@@ -1,4 +1,5 @@
-from email import message
+# from email import message
+from django.contrib import messages
 from xxlimited import new
 from django.shortcuts import render
 from .operation import *
@@ -22,18 +23,31 @@ from django.contrib.auth.models import User
 @csrf_exempt
 def handlesignup(request):
     if request.method == "POST":
-        useremail = request.get['useremail']
-        username = request.get['username']
-        password = request.get['password-input']
-        myuser = User.object.create_user(email=useremail, username=username, password=password)
-        myuser.save()
-        message.success(request,"your account has been created successfully")
-        return render(request, "dashboard-crm.html")
+        firstname = request.POST.get("first_name")
+        lastname = request.POST.get("last_name")
+        username = request.POST.get("user_name")
+        useremail = request.POST.get("user_email")
+        password = request.POST.get("password")
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request,'Username is already taken')
+            print("This Username is already has been taken")
+            return redirect("/")
+        elif User.objects.filter(email=useremail).exists():
+            messages.error(request,'Email is already taken')
+            return redirect("/")
+        else:
+            myuser = User.objects.create_user(username=username, password=password, email=useremail, first_name=firstname, last_name=lastname)
+            myuser.save()
+            messages.success(request,"your account has been created successfully")
+            return redirect("login")
     else:
         return render(request, "auth-signup-basic.html")
 
 @csrf_exempt
 def signin(request):
+
+
     return render(request,'auth-signin-basic.html')
 
 @csrf_exempt
