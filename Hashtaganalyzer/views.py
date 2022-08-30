@@ -1,15 +1,16 @@
 # from email import message
 from django.contrib import messages
-from xxlimited import new
+# from xxlimited import new
 from django.shortcuts import render
 from .operation import *
-from django.http import HttpResponse,response
+# from django.http import HttpResponse,response
 from django.shortcuts import render,HttpResponseRedirect,Http404,redirect
-from rest_framework.parsers import JSONParser
-from django.http import HttpResponse,JsonResponse
+# from rest_framework.parsers import JSONParser
+# from django.http import HttpResponse,JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.template import loader
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+# from django.template import loader
+from django.contrib.auth.models import User,auth
 
 # from .models import ItemsModel
 # from .serializers import ItemSerializer
@@ -32,10 +33,10 @@ def handlesignup(request):
         if User.objects.filter(username=username).exists():
             messages.error(request,'Username is already taken')
             print("This Username is already has been taken")
-            return redirect("/")
+            return redirect("signup")
         elif User.objects.filter(email=useremail).exists():
             messages.error(request,'Email is already taken')
-            return redirect("/")
+            return redirect("signup")
         else:
             myuser = User.objects.create_user(username=username, password=password, email=useremail, first_name=firstname, last_name=lastname)
             myuser.save()
@@ -45,22 +46,55 @@ def handlesignup(request):
         return render(request, "auth-signup-basic.html")
 
 @csrf_exempt
-def signin(request):
+def login(request):
+    if request.method == "POST":
+        username = request.POST.get('user_name')
+        password = request.POST.get("pass_word")
+        
+        user = auth.authenticate(username = username, password = password)
+        
+        if user is not None:
+            auth.login(request, user)
+            return redirect("/")
+        else:
+            messages.error(request,"Please enter valid Username and Password")
+            return redirect("login")
+    else:
+        return render(request,'auth-signin-basic.html')
 
 
-    return render(request,'auth-signin-basic.html')
+@csrf_exempt
+def home(request):
+    return render(request,'pages-starter.html')
 
+@csrf_exempt
+def logout(request):
+    auth.logout(request)
+    
+    return render(request,'auth-logout-basic.html')
+
+@csrf_exempt
+def about_us(request):    
+    return render(request,'about-us.html')
+
+
+@login_required(login_url="login")
 @csrf_exempt
 def index(request):
 
     # data = JSONParser().parse(request)
     # k=data['hastag']
-    k="#sunday"
+    # print(data)
+    # searched_word = ''
+    if request.method == "POST":
+        searched_word = request.POST.get('search_keyword')
+        print(searched_word)
+    # k="#sunday"
     # data = JSONParser().parse(request)
     # k=data['hastag']
     driver=open_insta()
 
-    hashtag_url, keyword = search_tag(driver=driver, keyword=k)
+    hashtag_url, keyword = search_tag(driver=driver, keyword=searched_word)
 
     driver.get(hashtag_url)
     print(hashtag_url)
@@ -69,7 +103,6 @@ def index(request):
     total_post = get_totalposts(driver)
     print(total_post)
     ttl_post=total_post
-    
 
     # rel_hashtags,mention_tag = get_all(new_url,driver,keyword)
     # related_tag = get_common(keyword ,rel_hashtags)
@@ -80,12 +113,12 @@ def index(request):
     like_sum = total_like(data)
     lang, freq = get_langchart(data=data)
     chart_likes = get_tagdetail(data=data)
-    user_name,user_count = get_usercount(data)
-    user_detail_dic = get_OneUserDetails(data)
+    user_name,user_count,df_user_analysis = get_usercount(data)
+    user_detail_dic = get_OneUserDetails(data,df_user_analysis)
     get_TagSentiment(data=data)
     get_RelatedHashtag(data=data)
     # chart=get_plotly_TagSentiment(data=data)
-    
+        
 
     sentiment = data["analysis"].value_counts().to_dict()
     new_list = []
@@ -104,10 +137,11 @@ def index(request):
         dict_2 = {"name":i, "data":[j]}
         user_freq_data.append(dict_2)
 
-    print(user_detail_dic)
-
-    d={"post":ttl_post,"hashtag":k, "likes":like_sum,"chart_likes":chart_likes,'new_list': new_list,'lang':lang,
-     'freq':freq, 'user_name':user_name[:10],'user_count':user_count[:10],'one_user_data':user_detail_dic}
+    # print(user_detail_dic)
+    print("--------------post",type(ttl_post))
+    print("-------------likes",type(like_sum))
+    d={"post":ttl_post,"hashtag":searched_word[1:], "likes":like_sum,"chart_likes":chart_likes,'new_list': new_list,'lang':lang,
+    'freq':freq, 'user_name':user_name[:15],'user_count':user_count[:15],'one_user_data':user_detail_dic}
 
     # return HttpResponse("id")
     return render(request, "dashboard-crm.html", d)

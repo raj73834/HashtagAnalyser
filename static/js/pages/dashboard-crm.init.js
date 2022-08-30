@@ -33,7 +33,7 @@ areachartSalesColors &&
         xaxis: {
             categories: [""],
             axisTicks: { show: !1, borderType: "solid", color: "#78909C", height: 6, offsetX: 0, offsetY: 0 },
-            title: { text: "Total Forecasted Value", offsetX: 0, offsetY: -30, style: { color: "#78909C", fontSize: "12px", fontWeight: 400 } },
+            // title: { text: "Total Forecasted Value", offsetX: 0, offsetY: -30, style: { color: "#78909C", fontSize: "12px", fontWeight: 400 } },
         },
         yaxis: {
             labels: {
@@ -45,7 +45,7 @@ areachartSalesColors &&
             min: 0,
         },
         fill: { opacity: 1 },
-        legend: { show: !0, position: "bottom", horizontalAlign: "center", fontWeight: 500, offsetX: 0, offsetY: -14, itemMargin: { horizontal: 8, vertical: 0 }, markers: { width: 10, height: 10 } },
+        legend: { show: !0, position: "bottom", horizontalAlign: "center", fontWeight: 500, offsetX: 0, offsetY: -14, itemMargin: { horizontal: 8, vertical: 0 }, markers: { width: 13, height: 13 } },
         colors: areachartSalesColors,
     }),
     (chart = new ApexCharts(document.querySelector("#sales-forecast-chart"), options)).render());
@@ -115,7 +115,7 @@ var chartDonutBasicColors = getChartColorsArray("freq_user");
 chartDonutBasicColors &&
     ((options = {
         series: users_count, chart: { height: 500, type: "donut" },
-    labels: users_name, legend: { position: "bottom" }, 
+    labels: users_name, legend: { position: "bottom" },
     dataLabels: { dropShadow: { enabled: !1 } }, colors: chartDonutBasicColors }),
     (chart = new ApexCharts(document.querySelector("#freq_user"), options)).render());
 

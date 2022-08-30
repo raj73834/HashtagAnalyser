@@ -69,7 +69,7 @@
                                     <!-- <p class="text-muted"></p> -->
                                 </div>
                                 <div class="p-2 mt-4">
-                                    <form class="needs-validation" action="/" method="post">
+                                    <form class="needs-validation" action="signup" method="post">
                                         {% csrf_token %}
                                         <div class="mb-3">
                                             <label for="firstname" class="form-label">First Name <span class="text-danger">*</span></label>
@@ -128,12 +128,11 @@
                                                 <h5 class="fs-13 mb-4 title text-muted">Create account with</h5>
                                             </div>
 
-                                            <div>
-                                                <button type="button" class="btn btn-primary btn-icon waves-effect waves-light"><i class="ri-facebook-fill fs-16"></i></button>
-                                                <button type="button" class="btn btn-danger btn-icon waves-effect waves-light"><i class="ri-google-fill fs-16"></i></button>
-                                                <button type="button" class="btn btn-dark btn-icon waves-effect waves-light"><i class="ri-github-fill fs-16"></i></button>
-                                                <button type="button" class="btn btn-info btn-icon waves-effect waves-light"><i class="ri-twitter-fill fs-16"></i></button>
-                                            </div>
+                                            <!-- <div>
+                                                <button type="button" class="btn btn-primary btn-icon waves-effect waves-light"><i class="ri-facebook-fill fs-22"></i></button>
+                                                <button type="button" class="btn btn-danger btn-icon waves-effect waves-light"><i class="ri-google-fill fs-21"></i></button>                                                
+                                                <button type="button" class="btn btn-info btn-icon waves-effect waves-light"><i class="ri-twitter-fill fs-22"></i></button>
+                                            </div> -->
                                         </div>
                                     </form>
 
@@ -154,7 +153,7 @@
                         <!-- end card -->
 
                         <div class="mt-4 text-center">
-                            <p class="mb-0">Already have an account ? <a href="auth-signin-basic.html" class="fw-semibold text-primary text-decoration-underline"> Signin </a> </p>
+                            <p class="mb-0">Already have an account ? <a href="login" class="fw-semibold text-primary text-decoration-underline"> Signin </a> </p>
                         </div>
 
                     </div>
@@ -172,7 +171,7 @@
                     <div class="col-lg-12">
                         <div class="text-center">
                             <p class="mb-0 text-muted">&copy;
-                                <script>document.write(new Date().getFullYear())</script> Velzon. Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand
+                                <script>document.write(new Date().getFullYear())</script> Fx All Rights Reserved
                             </p>
                         </div>
                     </div>
