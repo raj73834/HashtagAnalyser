@@ -6,11 +6,13 @@ from .operation import *
 # from django.http import HttpResponse,response
 from django.shortcuts import render,HttpResponseRedirect,Http404,redirect
 # from rest_framework.parsers import JSONParser
-# from django.http import HttpResponse,JsonResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 # from django.template import loader
 from django.contrib.auth.models import User,auth
+from django.core.mail import send_mail
+import math, random
 
 # from .models import ItemsModel
 # from .serializers import ItemSerializer
@@ -21,24 +23,49 @@ from django.contrib.auth.models import User,auth
 #     # return render(request, 'result.html', {'result':result})
 
 #     return Response("Hello world!",result)
+
+def generateOTP() :
+    digits = "0123456789"
+    OTP = ""
+    for i in range(4) :
+        OTP += digits[math.floor(random.random() * 10)]
+    return OTP
+
+def send_otp(request):
+    print("Here")
+    email=request.POST.get("useremail")
+    print(email)
+    o=generateOTP()
+    htmlgen = '<p>Your OTP is <strong>'+o+'</strong></p>'
+    send_mail('OTP request',o,'peterjenim23@gmail.com',[email],fail_silently=False,html_message=htmlgen)
+    # print(o)
+    # send_mail(
+    # subject=f"OTP request :{o}",
+    # message="hi nikhil!!!!",
+    # from_email='peterjenim23@gmail.com',
+    # recipient_list=[email],    
+    # fail_silently=False,
+    # )
+    return HttpResponse(o)
+
 @csrf_exempt
 def handlesignup(request):
     if request.method == "POST":
         firstname = request.POST.get("first_name")
         lastname = request.POST.get("last_name")
         username = request.POST.get("user_name")
-        useremail = request.POST.get("user_email")
+        # useremail = request.POST.get("user_email")
         password = request.POST.get("password")
 
         if User.objects.filter(username=username).exists():
             messages.error(request,'Username is already taken')
             print("This Username is already has been taken")
             return redirect("signup")
-        elif User.objects.filter(email=useremail).exists():
+        # elif User.objects.filter(email=useremail).exists():
             messages.error(request,'Email is already taken')
             return redirect("signup")
         else:
-            myuser = User.objects.create_user(username=username, password=password, email=useremail, first_name=firstname, last_name=lastname)
+            myuser = User.objects.create_user(username=username, password=password, first_name=firstname, last_name=lastname)
             myuser.save()
             messages.success(request,"your account has been created successfully")
             return redirect("login")
@@ -76,6 +103,10 @@ def logout(request):
 @csrf_exempt
 def about_us(request):    
     return render(request,'about-us.html')
+
+@csrf_exempt
+def contact_us(request):    
+    return render(request,'contact-us.html')
 
 
 @login_required(login_url="login")

@@ -146,7 +146,7 @@
                 <a class="ms-2 header-item d-none d-sm-flex" href="login">
                 <button type="button" class="btn btn-ghost-success waves-effect">Log in</button>
                 </a>
-                <a class="ms-2 header-item d-none d-sm-flex" href="signup">
+                <a class="header-item d-none d-sm-flex" href="signup">
                 <button type="button" class="btn btn-ghost-info waves-effect">Sign up</button>                
                 </a>
                 {% endif %}
@@ -261,7 +261,7 @@
                                         <a href="about" class="nav-link" data-key="t-calendar"> About - Us </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="apps-chat.html" class="nav-link" data-key="t-chat"> Contact - Us </a>
+                                        <a href="contact" class="nav-link" data-key="t-chat"> Contact - Us </a>
                                     </li>
                                     
                                        
@@ -291,39 +291,32 @@
                 <div class="container-fluid">
 
                     <!-- start page title -->
-                    <div class="row">
-                        <h1 class="mt-2 text-info" style="font-size: 55px; color: red; font-weight: bold;">
-                            <span class="text-warning"> # </span>
-                            ABOUT US
-                        </h1>
-                    </div>
-
-                    <div class="row">
-                        <p class="text mt-1 fs-20">
-                            Founded in 2015,<span class="text fs-20 fw-semibold"> F(x) Data Labs is the India’s 1st dedicated data science company</span>. We are based in 
-                            Ahmedabad - World Heritage City, offering expertise in Artificial Intelligence, Data Science, 
-                            Computer Vision, Machine Learning, Natural Language Processing and Full Stack Development.
-                        </p>
-                        <br>
-                        <p class="mt-1 fs-20">Our working model comprises On-Demand developers, Project Outsourcing and 
-                            Tech/Talent Partners. With our highly skilled pool of talent, F(x) Data Labs has been 
-                            continuously delivering cost-effective solutions for many esteemed global clients such as 
-                            Johnson &amp; Johnson, GWR (Guinness World Records), Symphony and furthermore.
-                        </p>
-                    </div>
-
-                    <div class="row">
-                        <p class ="mt-1" style="font-size: 24px; font-weight: bold;"> Hashtag Tracking Tools to Monitor Hashtag Performance </p>
-                        <p style="font-size: 16px;"> Analyze the quality of influencer's audiences, 
-                            engagement rate, and comment authenticity.
+                    <div class="row ms-5 mt-5 align-items-center">
+                        <div class="col-5">
+                            <h1 class="mt-2 text-info" style="font-size: 55px; color: red; font-weight: bold;">
+                                <span class="text-warning"> # </span>
+                                ABOUT US
+                            </h1>
+                        </div>                    
+                        
+                        <div class="col-7">
+                            <p class="p-justify fs-21">Founded in 2015, <spam class="fw-semibold">F(x) Data Labs is the India’s 
+                                1st dedicated data science company.</spam>We are based in Ahmedabad - World Heritage City, offering 
+                                expertise in Artificial Intelligence, Data Science, Computer Vision, Machine Learning, 
+                                Natural Language Processing and Full Stack Development.
+                            </p>
                             <br>
-                            <span class="text" style="font-size: 16px; font-weight: bold;">Monitor statistics for Instagram accounts</span>
-                             and use this information to 
-                            strengthen your influencer marketing activities. </p>
-                    </div> 
+                            <p class="p-justify fs-21">Our working model comprises On-Demand developers, Project Outsourcing and 
+                                Tech/Talent Partners. With our highly skilled pool of talent, F(x) Data Labs has been continuously 
+                                delivering cost-effective solutions for many esteemed global clients such as 
+                                Johnson &amp; Johnson, GWR (Guinness World Records), Symphony and furthermore.
+                            </p>
+                                              
+                        </div>
+                    </div>
                     <!-- end page title -->
                     
-                </div>                    
+                </div>
             </div>
             <!-- End Page-content -->
 
@@ -335,7 +328,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">
-                                Design & Develop by F(x)
+                                Design & Develop by F(x) Data Labs Pvt.Ltd
                             </div>
                         </div>
                     </div>
@@ -355,14 +348,14 @@
     </button>
     <!--end back-to-top-->
 
-    <div class="customizer-setting d-none d-md-block">
+    {% comment %} <div class="customizer-setting d-none d-md-block">
         <div class="btn-info btn-rounded shadow-lg btn btn-icon btn-lg p-2" data-bs-toggle="offcanvas" data-bs-target="#theme-settings-offcanvas" aria-controls="theme-settings-offcanvas">
             <i class='mdi mdi-spin mdi-cog-outline fs-22'></i>
         </div>
     </div>
 
     <!-- Theme Settings -->
-    {% comment %} <div class="offcanvas offcanvas-end border-0" tabindex="-1" id="theme-settings-offcanvas">
+    <div class="offcanvas offcanvas-end border-0" tabindex="-1" id="theme-settings-offcanvas">
         <div class="d-flex align-items-center bg-primary bg-gradient p-3 offcanvas-header">
             <h5 class="m-0 me-2 text-white">Theme Customizer</h5>
 
