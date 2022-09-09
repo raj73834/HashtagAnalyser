@@ -358,8 +358,7 @@
                             
                         </div><!-- end card -->
                         
-                    </div>
-                    
+                    </div>                    
                         <div class="col-xxl-4 col-md-6">
                             <div class="card card-height-100">
                                 <div class="card-header align-items-center d-flex">
@@ -396,10 +395,6 @@
                                 </div><!-- end card-body -->
                             </div><!-- end card -->
                         </div><!-- end col -->
-
-
-                        
-
 
                         <div class="col-xxl-6">
                             <div class="card">
@@ -489,141 +484,216 @@
                     </div><!-- end row -->
 
                     <div class="row">
-                        <!-- <div class="col-xxl-11"> 
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title mb-0">User frequance chart</h4>
-                                </div>
-
-                                <div class="card-body">
-                                    <div id="user_frequency" data-colors='["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]' class="apex-charts" dir="ltr"></div>
-                                </div>
-                            </div>
-                        </div> --> 
-
                         <div class="col-xl-7"> <!-- col-xxl-3 col-md-6 (change)-->
                             <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title mb-0">One User Chart</h4>
-                                </div><!-- end card header -->
+                                <div class="card-header align-items-center d-flex">
+                                    <h4 class="card-title mb-0 flex-grow-1">One User Chart</h4>
+                                    <div class="flex-shrink-0">
+                                        <select class="form-select form-select-sm" id="changeData" aria-label=".form-select-sm example">
+                                            <option value="1">User 01</option>
+                                            <option value="2">User 02</option>
+                                            <option value="3">User 03</option>
+                                            <option value="4">User 04</option>
+                                            <option value="5">User 05</option>
+                                        </select>
+                                    </div>
+                                </div>
 
                                 <div class="card-body">
                                     <div id="one_user_chart" data-colors='["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]' class="apex-charts" dir="ltr"></div>
                                 </div><!-- end card-body -->
+                                
                             </div><!-- end card -->
                         </div><!-- end col -->
 
                         <div class="col-xl-5">
                             <div class="card card-height-100">
                                 <div class="card-header align-items-center d-flex">
-                                    <h4 class="card-title mb-0 flex-grow-1">My Tasks</h4>
+                                    <h3 class="card-title mb-0 flex-grow-1">Common tags</h3>
                                     <div class="flex-shrink-0">
                                         <div class="dropdown card-header-dropdown">
-                                            <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <span class="text-muted"><i class="ri-settings-4-line align-middle me-1 fs-15"></i>Settings</span>
-                                            </a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" href="#">Edit</a>
-                                                <a class="dropdown-item" href="#">Remove</a>
-                                            </div>
+                                             <h3 class="card-title mb-0 flex-grow-1">
+                                                count
+                                            </h3>                                            
                                         </div>
                                     </div>
-                                </div><!-- end card header -->
+                                </div>
 
                                 <div class="card-body p-0">
 
-                                    <div class="align-items-center p-3 justify-content-between d-flex">
+                                    <!-- <div class="align-items-center p-3 justify-content-between d-flex">
                                         <div class="flex-shrink-0">
                                             <div class="text-muted"><span class="fw-semibold">4</span> of <span class="fw-semibold">10</span> remaining</div>
                                         </div>
                                         <button type="button" class="btn btn-sm btn-success"><i class="ri-add-line align-middle me-1"></i> Add Task</button>
-                                    </div><!-- end card header -->
-
-                                    <div data-simplebar style="max-height: 219px;">
+                                    </div>end card header -->
+                                                                       
+                                    <div data-simplebar style="max-height: 345px;">
+                                        <div class="text text-muted mt-3 ms-3">
+                                            This is common hashtags with his count of repitation
+                                        </div>
+                                        
                                         <ul class="list-group list-group-flush border-dashed px-3">
                                             <li class="list-group-item ps-0">
-                                                <div class="d-flex align-items-start">
-                                                    <div class="form-check ps-0 flex-sharink-0">
+                                                <div class="d-flex align-items-start">                                                    
+                                                    <!-- <div class="form-check ps-0 flex-sharink-0">
                                                         <input type="checkbox" class="form-check-input ms-0" id="task_one">
-                                                    </div>
-                                                    <div class="flex-grow-1">
-                                                        <label class="form-check-label mb-0 ps-2" for="task_one">Review and make sure nothing slips through cracks</label>
+                                                    </div> -->
+                                                    <div class="flex-grow-1">                                                         
+                                                        <label class="text-success fs-18 mb-0 ps-2" for="task_one">{{hash_name1}}</label>
                                                     </div>
                                                     <div class="flex-shrink-0 ms-2">
-                                                        <p class="text-muted fs-12 mb-0">15 Sep, 2021</p>
+                                                        <p class="text-success fs-18 mb-0">{{hash_count1}}</p>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </li>
+                                    
+                                            <li class="list-group-item ps-0">
+                                                <div class="d-flex align-items-start">                                                    
+                                                    <div class="flex-grow-1">
+                                                        <label class="text-info fs-18 mb-0 ps-2" for="task_two">{{hash_name2}}</label>
+                                                    </div>
+                                                    <div class="flex-shrink-0 ms-2">
+                                                        <p class="text-info fs-18 mb-0">{{hash_count2}}</p>
                                                     </div>
                                                 </div>
                                             </li>
                                             <li class="list-group-item ps-0">
                                                 <div class="d-flex align-items-start">
-                                                    <div class="form-check ps-0 flex-sharink-0">
-                                                        <input type="checkbox" class="form-check-input ms-0" id="task_two">
-                                                    </div>
                                                     <div class="flex-grow-1">
-                                                        <label class="form-check-label mb-0 ps-2" for="task_two">Send meeting invites for sales upcampaign</label>
+                                                        <label class="text-primary fs-18 mb-0 ps-2" for="task_three">{{hash_name3}}</label>
                                                     </div>
                                                     <div class="flex-shrink-0 ms-2">
-                                                        <p class="text-muted fs-12 mb-0">20 Sep, 2021</p>
+                                                        <p class="text-primary fs-18 mb-0">{{hash_count3}}</p>
                                                     </div>
                                                 </div>
                                             </li>
                                             <li class="list-group-item ps-0">
                                                 <div class="d-flex align-items-start">
-                                                    <div class="form-check flex-sharink-0 ps-0">
-                                                        <input type="checkbox" class="form-check-input ms-0" id="task_three">
-                                                    </div>
                                                     <div class="flex-grow-1">
-                                                        <label class="form-check-label mb-0 ps-2" for="task_three">Weekly closed sales won checking with sales team</label>
+                                                        <label class="text-warning fs-18 mb-0 ps-2" for="task_four">{{hash_name4}}</label>
                                                     </div>
                                                     <div class="flex-shrink-0 ms-2">
-                                                        <p class="text-muted fs-12 mb-0">24 Sep, 2021</p>
+                                                        <p class="text-warning fs-18 mb-0">{{hash_count4}}</p>
                                                     </div>
                                                 </div>
                                             </li>
                                             <li class="list-group-item ps-0">
                                                 <div class="d-flex align-items-start">
-                                                    <div class="form-check ps-0 flex-sharink-0">
-                                                        <input type="checkbox" class="form-check-input ms-0" id="task_four">
-                                                    </div>
                                                     <div class="flex-grow-1">
-                                                        <label class="form-check-label mb-0 ps-2" for="task_four">Add notes that can be viewed from the individual view</label>
+                                                        <label class="text-secondary fs-18 mb-0 ps-2" for="task_five">{{hash_name5}}</label>
                                                     </div>
                                                     <div class="flex-shrink-0 ms-2">
-                                                        <p class="text-muted fs-12 mb-0">27 Sep, 2021</p>
+                                                        <p class="text-secondary fs-18 mb-0">{{hash_count5}}</p>
                                                     </div>
                                                 </div>
                                             </li>
                                             <li class="list-group-item ps-0">
                                                 <div class="d-flex align-items-start">
-                                                    <div class="form-check ps-0 flex-sharink-0">
-                                                        <input type="checkbox" class="form-check-input ms-0" id="task_five">
-                                                    </div>
                                                     <div class="flex-grow-1">
-                                                        <label class="form-check-label mb-0 ps-2" for="task_five">Move stuff to another page</label>
+                                                        <label class="text-danger fs-18 mb-0 ps-2" for="task_six">{{hash_name6}}</label>
                                                     </div>
                                                     <div class="flex-shrink-0 ms-2">
-                                                        <p class="text-muted fs-12 mb-0">27 Sep, 2021</p>
+                                                        <p class="text-danger fs-18 mb-0">{{hash_count6}}</p>
                                                     </div>
                                                 </div>
                                             </li>
                                             <li class="list-group-item ps-0">
                                                 <div class="d-flex align-items-start">
-                                                    <div class="form-check ps-0 flex-sharink-0">
-                                                        <input type="checkbox" class="form-check-input ms-0" id="task_six">
-                                                    </div>
                                                     <div class="flex-grow-1">
-                                                        <label class="form-check-label mb-0 ps-2" for="task_six">Styling wireframe design and documentation for velzon admin</label>
+                                                        <label class="text-info fs-18 mb-0 ps-2" for="task_seven">{{hash_name7}}</label>
                                                     </div>
                                                     <div class="flex-shrink-0 ms-2">
-                                                        <p class="text-muted fs-12 mb-0">27 Sep, 2021</p>
+                                                        <p class="text-info fs-18 mb-0">{{hash_count7}}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item ps-0">
+                                                <div class="d-flex align-items-start">                                                    
+                                                    <div class="flex-grow-1">
+                                                        <label class="text-success fs-18 mb-0 ps-2" for="task_eight">{{hash_name8}}</label>
+                                                    </div>
+                                                    <div class="flex-shrink-0 ms-2">
+                                                        <p class="text-success fs-18 mb-0">{{hash_count8}}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item ps-0">
+                                                <div class="d-flex align-items-start">                                                    
+                                                    <div class="flex-grow-1">
+                                                        <label class="text-primary fs-18 mb-0 ps-2" for="task_nine">{{hash_name9}}</label>
+                                                    </div>
+                                                    <div class="flex-shrink-0 ms-2">
+                                                        <p class="text-primary fs-18 mb-0">{{hash_count9}}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item ps-0">
+                                                <div class="d-flex align-items-start">                                                    
+                                                    <div class="flex-grow-1">
+                                                        <label class="text-warning fs-18 mb-0 ps-2" for="task_ten">{{hash_name10}}</label>
+                                                    </div>
+                                                    <div class="flex-shrink-0 ms-2">
+                                                        <p class="text-warning fs-18 mb-0">{{hash_count10}}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item ps-0">
+                                                <div class="d-flex align-items-start">                                                    
+                                                    <div class="flex-grow-1">
+                                                        <label class="text-info fs-18 mb-0 ps-2" for="task_eleven">{{hash_name11}}</label>
+                                                    </div>
+                                                    <div class="flex-shrink-0 ms-2">
+                                                        <p class="text-info fs-18 mb-0">{{hash_count11}}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item ps-0">
+                                                <div class="d-flex align-items-start">                                                    
+                                                    <div class="flex-grow-1">
+                                                        <label class="text-secondary fs-18 mb-0 ps-2" for="task_twelve">{{hash_name12}}</label>
+                                                    </div>
+                                                    <div class="flex-shrink-0 ms-2">
+                                                        <p class="text-secondary fs-18 mb-0">{{hash_count12}}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item ps-0">
+                                                <div class="d-flex align-items-start">                                                    
+                                                    <div class="flex-grow-1">
+                                                        <label class="text-danger fs-18 mb-0 ps-2" for="task_thirten">{{hash_name13}}</label>
+                                                    </div>
+                                                    <div class="flex-shrink-0 ms-2">
+                                                        <p class="text-danger fs-18 mb-0">{{hash_count13}}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item ps-0">
+                                                <div class="d-flex align-items-start">                                                    
+                                                    <div class="flex-grow-1">
+                                                        <label class="text-primary fs-18 mb-0 ps-2" for="task_fourteen">{{hash_name14}}</label>
+                                                    </div>
+                                                    <div class="flex-shrink-0 ms-2">
+                                                        <p class="text-primary fs-18 mb-0">{{hash_count14}}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item ps-0">
+                                                <div class="d-flex align-items-start">                                                    
+                                                    <div class="flex-grow-1">
+                                                        <label class="text-dark fs-18 mb-0 ps-2" for="task_fifteen">{{hash_name15}}</label>
+                                                    </div>
+                                                    <div class="flex-shrink-0 ms-2">
+                                                        <p class="text-dark fs-18 mb-0">{{hash_count15}}</p>
                                                     </div>
                                                 </div>
                                             </li>
                                         </ul><!-- end ul -->
                                     </div>
-                                    <div class="p-3 pt-2">
+                                    <!-- <div class="p-3 pt-2">
                                         <a href="javascript:void(0);" class="text-muted text-decoration-underline">Show more...</a>
-                                    </div>
+                                    </div> -->
                                 </div><!-- end card body -->
                             </div><!-- end card -->
                         </div><!-- end col -->
@@ -1598,8 +1668,11 @@
         var for_freq = {{freq|safe}}
         var users_name = {{user_name|safe}}
         var users_count = {{user_count|safe}}
-        var one_user_details = {{one_user_data|safe}}
-        console.log(chart_data)
+        var one_user_details_1 = {{one_user_data|safe}}
+        var one_user_details_2 = {{one_user_data_2|safe}}
+        var one_user_details_3 = {{one_user_data_3|safe}}
+        var one_user_details_4 = {{one_user_data_4|safe}}
+        var one_user_details_5 = {{one_user_data_5|safe}}
     </script>
     <!-- <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script> -->
     <script type="module" src="static/js/pages/dashboard-crm.init.js" data-vals=""></script>

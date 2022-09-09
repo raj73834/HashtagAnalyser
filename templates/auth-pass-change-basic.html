@@ -1,13 +1,12 @@
-{% load static %}
 <!doctype html>
-<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none">
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="light" data-sidebar-size="lg" data-sidebar-image="none">
 
 
-<!-- Mirrored from themesbrand.com/velzon/html/default/auth-signin-basic.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 04 Jul 2022 11:33:47 GMT -->
+<!-- Mirrored from themesbrand.com/velzon/html/minimal/auth-pass-change-basic.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 02 Aug 2022 10:41:05 GMT -->
 <head>
 
     <meta charset="utf-8" />
-    <title>Sign In | F(x) Hashtag Analyser</title>
+    <title>Create New Password | Fx hashtag analyser</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
@@ -24,6 +23,7 @@
     <link href="static/css/app.min.css" rel="stylesheet" type="text/css" />
     <!-- custom Css-->
     <link href="static/css/custom.min.css" rel="stylesheet" type="text/css" />
+
 
 </head>
 
@@ -46,13 +46,13 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="text-center mt-sm-5 mb-4 text-white-50">
+                        <div class="text-center mt-sm-5 mb-1 text-white-50">
                             <div>
                                 <a href="index.html" class="d-inline-block auth-logo">
                                     <img src="static/images/logo-sm.png" alt="" height="50">
                                 </a>
                             </div>
-                            <p class="mt-3 fs-19 fw-medium">Monitor your Hashtags here</p>
+                            <!-- <p class="mt-3 fs-15 fw-medium">Premium Admin & Dashboard Template</p> -->
                         </div>
                     </div>
                 </div>
@@ -60,36 +60,40 @@
 
                 <div class="row justify-content-center">
                     <div class="col-md-8 col-lg-6 col-xl-5">
-                        <div class="card mt-1">
+                        <div class="card mt-4">
 
                             <div class="card-body p-4">
                                 <div class="text-center mt-2">
-                                    <h5 class="text-primary">Welcome !</h5>
-                                    <p class="text-muted">Sign in to continue to Hashtag Analyser.</p>
+                                    <h5 class="text-primary">Create new password</h5>
+                                    <p class="text-muted">Your new password must be different from previous used password.</p>
                                 </div>
-                                <div class="p-2 mt-4">
-                                    <form class="needs-validation" action="login" method="post">
+
+                                <div class="p-2">
+                                    <form class="needs-validation" action="pass-confirm" method="post">
                                         {% csrf_token %}
                                         <div class="mb-3">
-                                            <label for="username" class="form-label">Username</label>
-                                            <input type="text" class="form-control" name="user_name" id="username" placeholder="Enter username" required>
-                                            <div class="invalid-feedback">
-                                                please enter username
+                                            <label class="form-label" for="password-input">Password</label>
+                                            <div class="position-relative auth-pass-inputgroup">
+                                                <input type="password" class="form-control pe-5 password-input" name="password1" placeholder="Enter password" id="password-input" aria-describedby="passwordInput" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                                                <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button"><i class="ri-eye-fill align-middle"></i></button>
                                             </div>
+                                            <div id="passwordInput" class="form-text">Must be at least 8 characters.</div>
                                         </div>
 
                                         <div class="mb-3">
-                                            <div class="float-end">
-                                                <a href="{% url 'forget' %}" class="text-primary">Forgot password?</a>
-                                            </div>
-                                            <label class="form-label" for="password-input">Password</label>
+                                            <label class="form-label" for="confirm-password-input">Confirm Password</label>
                                             <div class="position-relative auth-pass-inputgroup mb-3">
-                                                <input type="password" class="form-control pe-5" placeholder="Enter password" name = "pass_word" id="password-input" required>
-                                                <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
-                                                <div class="invalid-feedback">
-                                                    Please enter password
-                                                </div>
+                                                <input type="password" class="form-control pe-5 password-input" name="password2" placeholder="Confirm password" required>
+                                                <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button"><i class="ri-eye-fill align-middle"></i></button>
                                             </div>
+                                        </div>
+
+                                        <div id="password-contain" class="p-3 bg-light mb-2 rounded">
+                                            <h5 class="fs-13">Password must contain:</h5>
+                                            <p id="pass-length" class="invalid fs-12 mb-2">Minimum <b>8 characters</b></p>
+                                            <p id="pass-lower" class="invalid fs-12 mb-2">At <b>lowercase</b> letter (a-z)</p>
+                                            <p id="pass-upper" class="invalid fs-12 mb-2">At least <b>uppercase</b> letter (A-Z)</p>
+                                            <p id="pass-number" class="invalid fs-12 mb-0">A least <b>number</b> (0-9)</p>
                                         </div>
 
                                         <div class="form-check">
@@ -98,31 +102,19 @@
                                         </div>
 
                                         <div class="mt-4">
-                                            <button class="btn btn-success w-100" type="">Sign In</button>
+                                            <button class="btn btn-success w-50" type="submit">Reset Password</button>
                                         </div>
+                                        {% for j in messages %}
+                                            {% if j.tags == 'error' %}
+                                            <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+                                            <script>
+                                                var m = "{{ j }}";
+                                                swal("Password not match!",m,"error")
+                                            </script>
+                                            {% endif %}
+                                        {% endfor %}
 
-                                        <!-- <div class="mt-4 text-center">
-                                            <div class="signin-other-title">
-                                                <h5 class="fs-13 mb-4 title">Sign In with</h5>
-                                            </div>
-                                            <div>
-                                                <button type="button" class="btn btn-primary btn-icon waves-effect waves-light"><i class="ri-facebook-fill fs-22"></i></button>
-                                                <button type="button" class="btn btn-danger btn-icon waves-effect waves-light"><i class="ri-google-fill fs-21"></i></button>                                                
-                                                <button type="button" class="btn btn-info btn-icon waves-effect waves-light"><i class="ri-twitter-fill fs-22"></i></button>
-                                            </div>
-                                        </div> -->
                                     </form>
-
-                                    {% for j in messages %}
-                                        {% if j.tags == 'error' %}
-                                        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-                                        <script>
-                                            var m = "{{ j }}";
-                                            swal("Invalid Credentials !",m,"error")
-                                        </script>
-                                        {% endif %}
-                                    {% endfor %}
-
                                 </div>
                             </div>
                             <!-- end card body -->
@@ -130,7 +122,7 @@
                         <!-- end card -->
 
                         <div class="mt-4 text-center">
-                            <p class="mb-0">Don't have an account ? <a href="signup" class="fw-semibold text-primary text-decoration-underline"> Signup </a> </p>
+                            <p class="mb-0">Wait, I remember my password... <a href="auth-signin-basic.html" class="fw-semibold text-primary text-decoration-underline"> Click here </a> </p>
                         </div>
 
                     </div>
@@ -148,7 +140,7 @@
                     <div class="col-lg-12">
                         <div class="text-center">
                             <p class="mb-0 text-muted">&copy;
-                                <script>document.write(new Date().getFullYear())</script> Fx All Rights Reserved
+                                <script>document.write(new Date().getFullYear())</script> Velzon. Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand
                             </p>
                         </div>
                     </div>
@@ -169,12 +161,14 @@
 
     <!-- particles js -->
     <script src="static/libs/particles.js/particles.js"></script>
+
     <!-- particles app js -->
     <script src="static/js/pages/particles.app.js"></script>
+
     <!-- password-addon init -->
-    <script src="static/js/pages/password-addon.init.js"></script>
+    <script src="static/js/pages/passowrd-create.init.js"></script>
 </body>
 
 
-<!-- Mirrored from themesbrand.com/velzon/html/default/auth-signin-basic.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 04 Jul 2022 11:33:47 GMT -->
+<!-- Mirrored from themesbrand.com/velzon/html/minimal/auth-pass-change-basic.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 02 Aug 2022 10:41:05 GMT -->
 </html>

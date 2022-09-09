@@ -122,82 +122,95 @@ chartDonutBasicColors &&
 
 var chartStackedBarColors = getChartColorsArray("one_user_chart");
 chartStackedBarColors &&
-    ((options = {series: one_user_details,
-        
-        chart: { type: "bar", height: 400, stacked: false, toolbar: { show: true }, },
-        plotOptions: { bar: { horizontal: false, columnWidth: "60%"} }, // chang in horizontal !0
-        stroke: { show: true, width: 6, colors: ["transparent"] },
-        title: { text: "This is the user's data which user name you have entered.", style: { fontWeight: 500 } },
-        xaxis: {
-            categories: [""],
+    ((options = chartoption(one_user_details_1)
+    ),
 
-            // labels: {
-            //     formatter: function (t) {
-            //         return t + "K";
+    
+    (chart = new ApexCharts(document.querySelector("#one_user_chart"), options)).render()
+    );
+    // console.log(one_user_details)
+
+    const changedata = document.getElementById('changeData');
+    changedata.addEventListener('change',function(e){
+        let currentChart = e.target.value ? e.target.value : 1;
+        let optionArr = [
+            one_user_details_1,
+            one_user_details_2,
+            one_user_details_3,
+            one_user_details_4,
+            one_user_details_5,
+        ]
+        let optionchart = optionArr[currentChart-1]        
+
+        document.querySelector("#one_user_chart").innerHTML = '';
+        options = chartoption(optionchart)
+        chart = new ApexCharts(document.querySelector("#one_user_chart"), options).render()
+        // console.log(optionchart)
+    });
+
+    function chartoption(option){
+        return {series: option,
+        
+            chart: { type: "bar", height: 400, stacked: false, toolbar: { show: true }, },
+            plotOptions: { bar: { horizontal: false, columnWidth: "60%"} }, // chang in horizontal !0
+            stroke: { show: true, width: 6, colors: ["transparent"] },
+            title: { text: "This is the only one user's details.", style: { fontWeight: 500 } },
+            animations: {
+                enabled: true,
+                easing: 'easeout',
+                speed: 900,
+                animateGradually: {
+                    enabled: true,
+                    delay: 150
+                },
+                dynamicAnimation: {
+                    enabled: true,
+                    speed: 350
+                }
+            },
+    
+            dataLabels:{
+                style:{
+                    colors:['#06333b']
+                }
+            },
+
+            xaxis: {
+                categories: [""],
+    
+                // labels: {
+                //     formatter: function (t) {
+                //         return t + "K";
+                //     },
+                // },
+            },
+            yaxis: { title: { text: void 0,} },
+            // tooltip: {
+            //     y: {
+            //         formatter: function (t) {
+            //             return t + "K";
+            //         },
             //     },
             // },
-        },
-        yaxis: { title: { text: void 0 } },
-        // tooltip: {
-        //     y: {
-        //         formatter: function (t) {
-        //             return t + "K";
-        //         },
-        //     },
-        // },
-        tooltip: {
-            custom: function({seriesIndex, dataPointIndex, w}) {
-              var data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
-              
-              return '<ul>' +
-              '<li><b>Time</b>: ' + data.x + '</li>' +
-              '<li><b>Number of Likes</b>: ' + data.y + '</li>' +
-              '<li><b>Sentiments</b>: \'' + data.sentiment + '\'</li>' +
-              '<li><b>Language</b>: \'' + data.language + '\'</li>' +
-            //   '<li><b>Site</b>: \'' + data.site + '\'</li>' +
-              '</ul>';
-            }
-          },
-        fill: { opacity: 1 },
-        legend: { position: "bottom" },
-        colors: chartStackedBarColors,
-    }),
-    (chart = new ApexCharts(document.querySelector("#one_user_chart"), options)).render());
-
-
-
-// var chartStackedBarColors = getChartColorsArray("user_frequency");
-// chartStackedBarColors &&
-//     ((options = {
-//         series: data_user_freq,
-        
-//         chart: { type: "bar", height: 400, stacked: false, toolbar: { show: true },},
-//         plotOptions: { bar: { horizontal: false, columnWidth: "100%"} }, // chang in horizontal !0
-//         stroke: { width: 1, colors: ["#fff"] },
-//         // title: { text: "Fiction Books Sales", style: { fontWeight: 500 } },
-//         xaxis: {
-//             categories: [""],
-
-//             // labels: {
-//             //     formatter: function (t) {
-//             //         return t + "K";
-//             //     },
-//             // },
-//         },
-//         yaxis: { title: { text: void 0 } },
-//         // tooltip: {
-//         //     y: {
-//         //         formatter: function (t) {
-//         //             return t + "K";
-//         //         },
-//         //     },
-//         // },
-//         // fill: { opacity: 1 },
-//         legend: { show:false },
-//         colors: chartStackedBarColors,
-//     }),
-//     (chart = new ApexCharts(document.querySelector("#user_frequency"), options)).render());
-    
+            tooltip: {
+                custom: function({seriesIndex, dataPointIndex, w}) {
+                  var data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
+                  
+                  return '<ul>' +
+                  '<li><b>Username</b>: ' + data.username + '</li>' +
+                  '<li><b>Time</b>: ' + data.x + '</li>' +
+                  '<li><b>Number of Likes</b>: ' + data.y + '</li>' +
+                  '<li><b>Sentiments</b>: ' + data.sentiment + '</li>' +
+                  '<li><b>Language</b>: ' + data.language + '</li>' +
+                //   '<li><b>Site</b>: \'' + data.site + '\'</li>' +
+                  '</ul>';
+                }
+              },
+            fill: { opacity: 1 },
+            legend: { position: "bottom" },
+            colors: chartStackedBarColors,}
+            
+    }    
 
 
 var dealTypeChartsColors = getChartColorsArray("deal-type-charts");

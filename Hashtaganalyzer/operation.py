@@ -1,4 +1,3 @@
-import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -17,7 +16,6 @@ import googletrans
 from googletrans import Translator
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import plotly.express as px
-import matplotlib
 import matplotlib.pyplot as plt
 # %matplotlib inline
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
@@ -115,7 +113,7 @@ def scroll(driver):
             if url.startswith('https://www.instagram.com/p/') and url not in new_url:
                 new_url.append(url)
         # print(len(new_url))
-        if len(new_url) >= 30:
+        if len(new_url) >= 600:
             break
         # Calculate new scroll height and compare with last scroll height
         new_height = driver.execute_script("return document.body.scrollHeight")
@@ -416,7 +414,7 @@ def get_langchart(data):
     pie_chart = px.pie(data1, values='counts', names='languages',hover_name='languages',title='Languages in the captions',
                         template='plotly_dark',width=900,height=550, hole = 0.6)
     pie_chart.update_traces(textinfo='percent+label',textposition = 'inside',pull=[0.1],marker = dict(line = dict(color='cyan',width = 1)))
-    pie_chart.show()
+    # pie_chart.show()
 
     return lang, freq
 
@@ -501,26 +499,26 @@ def get_usercount(data):
                                     template='plotly_dark',
                                     title="Shown Which user are use # multiple time")
     new_plot_user_analysis.update_traces(width=0.6, opacity=0.7)
-    new_plot_user_analysis.show()
+    # new_plot_user_analysis.show()
 
     return user_name,user_count,df_user_analysis
 
 def get_OneUserDetails(data,df_user_analysis):
-    stor = df_user_analysis["user_name"][:1].to_string()
-    stor[5:]
-    one_user_data = data[data['Username'] == stor[5:]]
+    stor = df_user_analysis["user_name"][:1].to_list()
+    one_user_data = data[data['Username'] == stor[0]]
     # one_user_data
     df_for_oneuser_data = pd.DataFrame(one_user_data)
 
-    for_user_apex_0 = df_for_oneuser_data['Created At'].to_list()
-    for_user_apex_1 = df_for_oneuser_data['Likes/Views'].to_list()
-    for_user_apex_2 = df_for_oneuser_data['analysis'].to_list()
-    for_user_apex_3 = df_for_oneuser_data['language'].to_list()
+    for_user_apex_0 = df_for_oneuser_data['Username'].to_list()
+    for_user_apex_1 = df_for_oneuser_data['Created At'].to_list()
+    for_user_apex_2 = df_for_oneuser_data['Likes/Views'].to_list()
+    for_user_apex_3 = df_for_oneuser_data['analysis'].to_list()
+    for_user_apex_4 = df_for_oneuser_data['language'].to_list()
 
     user_detail_dic = []
-    user_data = list(zip(for_user_apex_0, for_user_apex_1,for_user_apex_2,for_user_apex_3))
+    user_data = list(zip(for_user_apex_0, for_user_apex_1,for_user_apex_2,for_user_apex_3,for_user_apex_4))
     for i in user_data:
-        making_userdata = {"name":i[0],"data":[{'x':i[0],'y':i[1],'sentiment':i[2],'language':i[3]}]}
+        making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
         user_detail_dic.append(making_userdata)
 
     # plot_one_user_analysis = px.bar(one_user_data,
@@ -537,6 +535,86 @@ def get_OneUserDetails(data,df_user_analysis):
     # plot_one_user_analysis.show()
 
     return user_detail_dic
+
+def get_OneUserDetails_02(data,df_user_analysis):
+    stor = df_user_analysis["user_name"].to_list()
+    one_user_data = data[data['Username'] == stor[1]]
+    # one_user_data
+    df_for_oneuser_data = pd.DataFrame(one_user_data)
+
+    for_user_apex_0 = df_for_oneuser_data['Username'].to_list()
+    for_user_apex_1 = df_for_oneuser_data['Created At'].to_list()
+    for_user_apex_2 = df_for_oneuser_data['Likes/Views'].to_list()
+    for_user_apex_3 = df_for_oneuser_data['analysis'].to_list()
+    for_user_apex_4 = df_for_oneuser_data['language'].to_list()
+
+    user_detail_dic_2 = []
+    user_data = list(zip(for_user_apex_0, for_user_apex_1,for_user_apex_2,for_user_apex_3,for_user_apex_4))
+    for i in user_data:
+        making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
+        user_detail_dic_2.append(making_userdata)
+
+    return user_detail_dic_2
+
+def get_OneUserDetails_03(data,df_user_analysis):
+    stor = df_user_analysis["user_name"].to_list()
+    one_user_data = data[data['Username'] == stor[2]]
+    # one_user_data
+    df_for_oneuser_data = pd.DataFrame(one_user_data)
+
+    for_user_apex_0 = df_for_oneuser_data['Username'].to_list()
+    for_user_apex_1 = df_for_oneuser_data['Created At'].to_list()
+    for_user_apex_2 = df_for_oneuser_data['Likes/Views'].to_list()
+    for_user_apex_3 = df_for_oneuser_data['analysis'].to_list()
+    for_user_apex_4 = df_for_oneuser_data['language'].to_list()
+
+    user_detail_dic_3 = []
+    user_data = list(zip(for_user_apex_0, for_user_apex_1,for_user_apex_2,for_user_apex_3,for_user_apex_4))
+    for i in user_data:
+        making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
+        user_detail_dic_3.append(making_userdata)
+
+    return user_detail_dic_3
+
+def get_OneUserDetails_04(data,df_user_analysis):
+    stor = df_user_analysis["user_name"].to_list()
+    one_user_data = data[data['Username'] == stor[3]]
+    # one_user_data
+    df_for_oneuser_data = pd.DataFrame(one_user_data)
+
+    for_user_apex_0 = df_for_oneuser_data['Username'].to_list()
+    for_user_apex_1 = df_for_oneuser_data['Created At'].to_list()
+    for_user_apex_2 = df_for_oneuser_data['Likes/Views'].to_list()
+    for_user_apex_3 = df_for_oneuser_data['analysis'].to_list()
+    for_user_apex_4 = df_for_oneuser_data['language'].to_list()
+
+    user_detail_dic_4 = []
+    user_data = list(zip(for_user_apex_0, for_user_apex_1,for_user_apex_2,for_user_apex_3,for_user_apex_4))
+    for i in user_data:
+        making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
+        user_detail_dic_4.append(making_userdata)
+
+    return user_detail_dic_4
+
+def get_OneUserDetails_05(data,df_user_analysis):
+    stor = df_user_analysis["user_name"].to_list()
+    one_user_data = data[data['Username'] == stor[4]]
+    # one_user_data
+    df_for_oneuser_data = pd.DataFrame(one_user_data)
+
+    for_user_apex_0 = df_for_oneuser_data['Username'].to_list()
+    for_user_apex_1 = df_for_oneuser_data['Created At'].to_list()
+    for_user_apex_2 = df_for_oneuser_data['Likes/Views'].to_list()
+    for_user_apex_3 = df_for_oneuser_data['analysis'].to_list()
+    for_user_apex_4 = df_for_oneuser_data['language'].to_list()
+
+    user_detail_dic_5 = []
+    user_data = list(zip(for_user_apex_0, for_user_apex_1,for_user_apex_2,for_user_apex_3,for_user_apex_4))
+    for i in user_data:
+        making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
+        user_detail_dic_5.append(making_userdata)
+
+    return user_detail_dic_5
 
 def get_TagSentiment(data):
     # sentiment chart
@@ -557,27 +635,24 @@ def get_TagSentiment(data):
                         template='plotly_dark',
                         title="Showing the sentiments of the all posts.")
     plot_sentimen_analysis.update_traces(width=0.6, opacity=0.7)
-    plot_sentimen_analysis.show()
-# def get_plotly_TagSentiment(data):
-#     # sentiment chart
-#     sentiment = data["analysis"].value_counts().to_dict()
-#     df_sentiment_analysis = pd.DataFrame()
-#     df_sentiment_analysis["sentiment"] = sentiment.keys()
-#     df_sentiment_analysis["sentiment_freq"] = sentiment.values()
-#     # df_sentiment_analysis
+    # plot_sentimen_analysis.show()
 
-#     plot_sentimen_analysis = px.bar(df_sentiment_analysis,
-#                         x="sentiment",
-#                         y="sentiment_freq",
-#                         # hover_data=['analysis','language'],
-#                         color="sentiment",
-#                         # hover_name='Username',
-#                         # labels={'sentiment': '', 'sentiment_freq':'Numbers of likes'},
-#                         # text="Likes/Views",
-#                         template='plotly_dark',
-#                         title="Showing the sentiments of the all posts.")
-#     plot_sentimen_analysis.update_traces(width=0.6, opacity=0.7)
-#     chart=plot_sentimen_analysis.to_html()
+def show_common_hash(data):
+    hash_list = data["Hashtags"].to_list()
+    look_common_hash = []
+    for i in hash_list:
+        look_common_hash.extend(eval(i))
+    hash_name = []
+    hash_count = []
+    hash_cont = Counter(look_common_hash)
+    # print(hash_conter)
+    for letter, count in hash_cont.most_common(16):
+        # if letter != keyword[0:]:
+        # print(letter, count)
+        hash_name.append(str(letter))
+        hash_count.append(str(count))
+    
+    return hash_name, hash_count
    
 
 #     return chart
@@ -595,6 +670,5 @@ def get_RelatedHashtag(data):
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
     # plt.tight_layout(pad=0)
-    plt.savefig('static/Related_Hash.png',dpi = 200,bbox_inches='tight')
-    
+    plt.savefig('static/Related_Hash.png',dpi = 200,bbox_inches='tight')    
     # plt.show()

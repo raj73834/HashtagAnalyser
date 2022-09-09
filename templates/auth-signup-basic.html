@@ -30,7 +30,9 @@
 </head>
 
 <body>
-
+    <script>
+        func
+    </script>
     <div class="auth-page-wrapper pt-5">
         <!-- auth page bg -->
         <div class="auth-one-bg-position auth-one-bg" id="auth-particles">
@@ -76,66 +78,67 @@
                                         <div class="mb-3" id="email_div" style="display: block;">
                                             <label for="useremail" class="form-label">Email <span class="text-danger">*</span></label>
                                             <input type="email" class="form-control" name="user_email" id="useremail" placeholder="Enter email address" required>
-                                            <button class="btn btn-success w-100" onclick="ajax_send_otp()">Send OTP</button>
                                             <div class="invalid-feedback">
                                                 Please enter email
                                             </div>
+                                            <button class="btn btn-success w-100" onclick="ajax_send_otp()">Send OTP</button>
+                                            
                                         </div>
                                         <div id="verify_text_div"></div>
                                         <div id="otp_div" style="display: none;" >
                                             <label for="useremail" class="form-label">OTP</label>
-                                            <input type="text" name="otp" id="otp">
-                                            <button class="btn btn-success w-100" onclick="verify_otp()">Verify</button>
-                                        </div>
+                                            <input type="text" class="form-control" name="otp" placeholder="Enter OTP here..." id="otp" required>
+                                            <button class="btn btn-success w-100" type="submit" onclick="verify_otp()">Verify</button>
+                                        </div>                                        
 
                                         <br>
-
-                                        <div class="mb-3" id="form_div" style="display: block;">
-                                            <label for="firstname" class="form-label">First Name <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" name="first_name" id="firstname" placeholder="Enter firstname" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="lastname" class="form-label">Last Name <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" name="last_name" id="lastname" placeholder="Enter lastname" required>
-                                        </div>
-
-                                        
-                                        <div class="mb-3">
-                                            <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" name="user_name" id="username" placeholder="Enter username" required>
-                                            <div class="invalid-feedback">
-                                                Please enter username
+                                        <div id="form_div" style="display: none;" >
+                                            <div class="mb-3" id="form_div">
+                                                <label for="firstname" class="form-label">First Name <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" name="first_name" id="firstname" placeholder="Enter firstname" required>
                                             </div>
-                                        </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label" for="password-input">Password</label>
-                                            <div class="position-relative auth-pass-inputgroup">
-                                                <input type="password" class="form-control pe-5 password-input" onpaste="return false" placeholder="Enter password" name="password" id="password-input" aria-describedby="passwordInput" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
-                                                <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
+                                            <div class="mb-3">
+                                                <label for="lastname" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" name="last_name" id="lastname" placeholder="Enter lastname" required>
+                                            </div>
+
+                                            
+                                            <div class="mb-3">
+                                                <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" name="user_name" id="username" placeholder="Enter username" required>
                                                 <div class="invalid-feedback">
-                                                    Please enter password
+                                                    Please enter username
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div class="mb-4">
-                                            <p class="mb-0 fs-12 text-muted fst-italic">By registering you agree to the Fx(Hashtag Analyzer) <a href="#" class="text-primary text-decoration-underline fst-normal fw-medium">Terms of Use</a></p>
-                                        </div>
+                                            <div class="mb-3">
+                                                <label class="form-label" for="password-input">Password</label>
+                                                <div class="position-relative auth-pass-inputgroup">
+                                                    <input type="password" class="form-control pe-5 password-input" onpaste="return false" placeholder="Enter password" name="password" id="password-input" aria-describedby="passwordInput" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                                                    <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
+                                                    <div class="invalid-feedback">
+                                                        Please enter password
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                        <div id="password-contain" class="p-3 bg-light mb-2 rounded">
-                                            <h5 class="fs-13">Password must contain:</h5>
-                                            <p id="pass-length" class="invalid fs-12 mb-2">Minimum <b>8 characters</b></p>
-                                            <p id="pass-lower" class="invalid fs-12 mb-2">At <b>lowercase</b> letter (a-z)</p>
-                                            <p id="pass-upper" class="invalid fs-12 mb-2">At least <b>uppercase</b> letter (A-Z)</p>
-                                            <p id="pass-number" class="invalid fs-12 mb-0">A least <b>number</b> (0-9)</p>
-                                        </div>
+                                            <div class="mb-4">
+                                                <p class="mb-0 fs-12 text-muted fst-italic">By registering you agree to the Fx(Hashtag Analyzer) <a href="#" class="text-primary text-decoration-underline fst-normal fw-medium">Terms of Use</a></p>
+                                            </div>
 
-                                        <div class="mt-4">                                            
-                                            <button class="btn btn-success w-100" type="submit">Sign Up</button>
-                                        </div>
+                                            <div id="password-contain" class="p-3 bg-light mb-2 rounded">
+                                                <h5 class="fs-13">Password must contain:</h5>
+                                                <p id="pass-length" class="invalid fs-12 mb-2">Minimum <b>8 characters</b></p>
+                                                <p id="pass-lower" class="invalid fs-12 mb-2">At <b>lowercase</b> letter (a-z)</p>
+                                                <p id="pass-upper" class="invalid fs-12 mb-2">At least <b>uppercase</b> letter (A-Z)</p>
+                                                <p id="pass-number" class="invalid fs-12 mb-0">A least <b>number</b> (0-9)</p>
+                                            </div>
 
+                                            <div class="mt-4">                                            
+                                                <button class="btn btn-success w-100" type="submit">Sign Up</button>
+                                            </div>
+                                        </div>
                                         <!-- <div class="mt-4 text-center">
                                             <div class="signin-other-title">
                                                 <h5 class="fs-13 mb-4 title text-muted">Create account with</h5>
@@ -147,40 +150,7 @@
                                                 <button type="button" class="btn btn-info btn-icon waves-effect waves-light"><i class="ri-twitter-fill fs-22"></i></button>
                                             </div>
                                         </div> -->
-                                    </form>
-
-                                    <script>
-                                        var otp_from_back="";
-                                        function ajax_send_otp(){
-                                           document.getElementById("email_div").style.display='none';
-                                           email = document.getElementById("useremail");
-                                         $.post("/send_otp",
-                                             {
-                                                 "useremail":email.value,
-                                                 "csrfmiddlewaretoken":"{{csrf_token}}"
-                                             },
-                                             function(data, status){
-                                                 if(status=="success"){
-                                                     otp_from_back = data;
-                                                     document.getElementById("otp_div").style.display='block';
-                                                     }
-                                        }
-                                        );
-                                        }
-                                       function verify_otp(){
-                                           var user_otp=document.getElementById("otp").value;
-                                           if (user_otp==otp_from_back){
-                                               document.getElementById("verify_text_div").style.color="green";            
-                                               document.getElementById("verify_text_div").innerHTML="OTP Verified";
-                                               document.getElementById("otp_div").style.display="none";
-                                               document.getElementById("form_div").style.display="block";
-                                           }
-                                           else{
-                                               document.getElementById("verify_text_div").style.color="red";
-                                               document.getElementById("verify_text_div").innerHTML="Try Again!!";
-                                           }
-                                       } 
-                                    </script>
+                                    </form>                                    
 
                                     {% for i in messages %}
                                         {% if i.tags == 'error' %}
@@ -190,7 +160,53 @@
                                             swal("Oops !",m,"error")
                                         </script>
                                         {% endif %}
-                                    {% endfor %}
+                                    {% endfor %}                                    
+
+                                    <script>
+                                        var otp_from_back="";
+                                        function ajax_send_otp(){
+                                            email = document.getElementById("useremail");
+                                            if(email.value===''){
+                                                alert('please enter email')
+                                                document.getElementById("email_div").style.display='block'
+                                                document.getElementById("otp_div").style.display='none'
+                                            }
+                                          
+                                            // email = document.getElementById("useremail");
+                                            $.post("/send_otp",
+                                                {
+                                                    "useremail":email.value,
+                                                    "csrfmiddlewaretoken":"{{csrf_token}}"
+                                                },
+                                                
+
+                                                function(data, status){
+                                                    console.log(data,email.value.length)
+                                                    if(status=="success"){
+                                                        otp_from_back = data;
+                                                        if(email.value.length>0){
+                                                            document.getElementById("email_div").style.display='none'
+                                                            document.getElementById("otp_div").style.display='block';
+                                                        }
+                                                        
+                                                        }
+                                        }
+                                        );
+                                        }
+                                        function verify_otp(){
+                                            var user_otp=document.getElementById("otp").value;
+                                            if (user_otp==otp_from_back){
+                                                document.getElementById("verify_text_div").style.color="green";            
+                                                document.getElementById("verify_text_div").innerHTML="OTP Verified";
+                                                document.getElementById("otp_div").style.display="none";
+                                                document.getElementById("form_div").style.display="block";
+                                            }
+                                            else{
+                                                document.getElementById("verify_text_div").style.color="red";
+                                                document.getElementById("verify_text_div").innerHTML="Try Again!!";
+                                            }
+                                        } 
+                                    </script>                                    
 
                                 </div>
                             </div>                    
