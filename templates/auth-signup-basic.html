@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <title>Sign Up | F(x) Hashtag Analyser</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta name="description" content="Expertise in artificial intelligence, machine learning and full stack web development to small, medium and large enterprises."  />
     <meta content="Themesbrand" name="author" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="static/images/favicon.ico">
@@ -81,14 +81,16 @@
                                             <div class="invalid-feedback">
                                                 Please enter email
                                             </div>
-                                            <button class="btn btn-success w-100" onclick="ajax_send_otp()">Send OTP</button>
-                                            
+                                            <button class="btn btn-success w-100" onclick="ajax_send_otp()">Send OTP</button>                                            
                                         </div>
                                         <div id="verify_text_div"></div>
                                         <div id="otp_div" style="display: none;" >
                                             <label for="useremail" class="form-label">OTP</label>
                                             <input type="text" class="form-control" name="otp" placeholder="Enter OTP here..." id="otp" required>
                                             <button class="btn btn-success w-100" type="submit" onclick="verify_otp()">Verify</button>
+                                            <div class="mt-2 text-sm-end">
+                                                <p class="mb-0"><a href="#otp" class="fw-semibold text-primary" onclick="ajax_send_otp()"> Click here </a>to resend OTP</p>
+                                            </div>
                                         </div>                                        
 
                                         <br>
@@ -160,12 +162,20 @@
                                             swal("Oops !",m,"error")
                                         </script>
                                         {% endif %}
-                                    {% endfor %}                                    
+                                    {% endfor %}
+                                    
+                                    <!-- {% if messages %}
+                                        {% for message in messages %}
+                                        {% if message.tags %}  <script>alert("{{ message }}")</script> {% endif %}
 
+                                        {% endfor %}
+
+                                    {% endif %} -->
                                     <script>
                                         var otp_from_back="";
                                         function ajax_send_otp(){
-                                            email = document.getElementById("useremail");
+                                            email = document.getElementById("useremail");                                            
+                                            
                                             if(email.value===''){
                                                 alert('please enter email')
                                                 document.getElementById("email_div").style.display='block'
@@ -177,8 +187,7 @@
                                                 {
                                                     "useremail":email.value,
                                                     "csrfmiddlewaretoken":"{{csrf_token}}"
-                                                },
-                                                
+                                                },                                                
 
                                                 function(data, status){
                                                     console.log(data,email.value.length)
@@ -189,7 +198,8 @@
                                                             document.getElementById("otp_div").style.display='block';
                                                         }
                                                         
-                                                        }
+                                                    }
+                                                    
                                         }
                                         );
                                         }
@@ -205,11 +215,11 @@
                                                 document.getElementById("verify_text_div").style.color="red";
                                                 document.getElementById("verify_text_div").innerHTML="Try Again!!";
                                             }
-                                        } 
-                                    </script>                                    
+                                        }
+                                    </script>
 
                                 </div>
-                            </div>                    
+                            </div>
                         </div>
                         <!-- end card -->
 
@@ -232,7 +242,7 @@
                     <div class="col-lg-12">
                         <div class="text-center">
                             <p class="mb-0 text-muted">&copy;
-                                <script>document.write(new Date().getFullYear())</script> Fx All Rights Reserved
+                                <script>document.write(new Date().getFullYear())</script>F(x) Data Labs Pvt. Ltd. All Rights Reserved
                             </p>
                         </div>
                     </div>

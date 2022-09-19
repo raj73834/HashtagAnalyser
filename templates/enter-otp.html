@@ -81,7 +81,10 @@
                                         </div>
 
                                         <div class="text-center mt-4">
-                                            <button class="btn btn-success w-100" type="submit">Veryfy OTP</button>
+                                            <button class="btn btn-success w-100" type="submit">Verify OTP</button>
+                                        </div>
+                                        <div class="mt-2 text-sm-end">
+                                            <p class="mb-0"><a href="resend-otp" class="fw-semibold text-primary"> Click here </a>to resend OTP </p>
                                         </div>
                                         {% for j in messages %}
                                             {% if j.tags == 'error' %}

@@ -39,12 +39,9 @@ def open_insta():
     # display.start()
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
     driver.get("http://www.instagram.com")
-
     # target username
-    username = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))
-    password = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='password']")))
+    username = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))
+    password = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='password']")))
 
     # enter username and password
     # forthe_fx
@@ -55,23 +52,18 @@ def open_insta():
     username.send_keys("forthe_fx")
     password.clear()
     password.send_keys("sa7x_6R4UNLeVPW")
-
     # time.sleep(2)
     # target the login button and click it
     button = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
-
     time.sleep(2)
-
     alert = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Not now")]'))).click()
     alert2 = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[class='_a9-- _a9_1']"))).click()
 
     return driver
 
-
 def search_tag(driver=None, keyword=None):
     # target the search input field
-    searchbox = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.XPATH, "//input[@placeholder='Search']")))
+    searchbox = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//input[@placeholder='Search']")))
     searchbox.clear()
 
     # search for the hashtag
@@ -92,19 +84,16 @@ def get_totalposts(driver):
     total_post = post.replace(',',"")
     return total_post
 
-
 def scroll(driver):
     time.sleep(1)
-    SCROLL_PAUSE_TIME = 5
     post_urls = []
     # Get scroll height
     last_height = driver.execute_script("return document.body.scrollHeight")
     while True:
         # Scroll down to bottom
-        driver.execute_script(
-            "window.scrollTo(0, document.body.scrollHeight);")
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        soup_for_scroll = BeautifulSoup(driver.page_source, "html.parser")
         # Wait to load page
-        time.sleep(SCROLL_PAUSE_TIME)
         fetch_urls = driver.find_elements_by_xpath("//a[@href]")
         for url in fetch_urls:
             post_urls.append(url.get_attribute("href"))
@@ -112,20 +101,22 @@ def scroll(driver):
         for url in post_urls:
             if url.startswith('https://www.instagram.com/p/') and url not in new_url:
                 new_url.append(url)
-        # print(len(new_url))
-        if len(new_url) >= 600:
+        print(len(new_url))
+        if len(new_url) >= 800:
             break
         # Calculate new scroll height and compare with last scroll height
         new_height = driver.execute_script("return document.body.scrollHeight")
         if new_height == last_height:
-            break
+            time.sleep(6)
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            second_new_height = driver.execute_script("return document.body.scrollHeight")
+            if second_new_height == last_height:
+                break
         last_height = new_height
 
     return new_url
 
-
 def get_username(soup):
-    # time.sleep(2)
     username = soup.find('header').find('span').text
     if len(username) == 0:
         username = soup.find('header').findAll('span')
@@ -136,9 +127,7 @@ def get_username(soup):
     # print("username part---",username,'\n')
     return username
 
-
 def get_likes(no_like, like, view, df):
-
     for l in like:
         for j in no_like:
             # print(j)
@@ -169,7 +158,6 @@ def get_likes(no_like, like, view, df):
 
 
 def get_mentions(mention):
-    # time.sleep(1)
     mentions = []
     for m in mention:
         if m.text.startswith("@"):
@@ -185,7 +173,6 @@ def get_mentions(mention):
 
 
 def get_hashtags(hashtag):
-    # time.sleep(1)
     hashtags = []
     for h in hashtag:
         if h.text.startswith("#"):
@@ -195,7 +182,6 @@ def get_hashtags(hashtag):
 
 
 def get_date(soup):
-    # time.sleep(1)
     created = soup.find(
         'div', {'class': '_aacl _aacm _aacu _aacy _aad6'}).find('time').text
     # print("time part---",created,"\n")
@@ -203,7 +189,6 @@ def get_date(soup):
 
 
 def get_caption(driver, df):
-    # time.sleep(2)
     soup_any = BeautifulSoup(driver.page_source, "html.parser")
     try:
         for i in soup_any.find('ul').findAll('a'):
@@ -276,23 +261,9 @@ def get_parameters(driver, url):
 
 
 def get_all(list1, driver, keyword):
-
-    rel_hashtags = []
-    mention_tag = []
     c = 0
     for url in list1:
         df, anchor = get_parameters(driver, url)
-
-        try:
-            rel_hashtags.append(get_hashtags(anchor))
-        except:
-            pass
-
-        try:
-            mentions = get_mentions(anchor)
-            mention_tag.append(mentions)
-        except:
-            pass
 
         captions_value = []
         try:
@@ -323,14 +294,14 @@ def get_all(list1, driver, keyword):
                         df['language'] = lang_list
                     print("This is list", df['language'])
                 if not 'language' in df:
-                    df['language'] = np.nan
+                    df['language'] = 'no detect'
                 print(df["language"])
             except:
                 pass
             if df['language'] == None:
-                df['language'] = np.nan
+                df['language'] = 'no detect'
 
-
+            df["translate caption"] = None
             try:
                 translation = translator.translate(i)
                 translated_sentance.append(translation.text)
@@ -338,6 +309,8 @@ def get_all(list1, driver, keyword):
                 df["translate caption"] = translated_sentance
             except:
                 pass
+            if df["translate caption"] == None:
+                df["translate caption"] = 'no translate'
 
             for s in translated_sentance:
                 print("This is s text------->")
@@ -346,16 +319,15 @@ def get_all(list1, driver, keyword):
             if vs['compound'] >= 0.05:
                 print(s, '\n', vs, '\n', 'Positive', '\n')
                 df['analysis'] = 'Positive'
-
             elif vs['compound'] <= -0.05:
                 print(s, '\n', vs, '\n', 'Negative', '\n')
                 df['analysis'] = 'Negative'
-
             else:
                 print(s, '\n', vs, '\n', 'Natural', '\n')
                 df['analysis'] = 'Neutral'
 
             data = pd.DataFrame([df])
+            print("This is get_data keyword------->",keyword)
             if c == 0:
                 data.to_csv(keyword[1:]+' testing-12.csv',mode='a', sep=",", index=False, header=True)
                 c += 1
@@ -366,35 +338,9 @@ def get_all(list1, driver, keyword):
     # new_data['related_hash'] = pd.Series(common_hash)
     # new_data.to_csv(keyword[1:]+'Fianl.csv', mode='a', sep=',', index=False)
     #         print('%s: %d' % (tag, count))
-    return rel_hashtags, mention_tag
-
-
-def get_common(keyword, hash=None, mention=None):
-    try:
-        related_tag = []
-        rel_hash = chain.from_iterable(hash)
-        # print('this is only tags--------------------',hash)
-        hash_count = Counter(rel_hash)
-        for letter in hash_count.most_common(16):
-            if letter[0] != keyword[0:]:
-                related_tag.append(letter)
-        print('This is common hash \n', *related_tag, sep='\n')
-        return related_tag
-    except:
-        pass
-
-    mention_list = []
-    rel_menti = chain.from_iterable(mention)
-    # print('this is only tags--------------------',mention)
-    ment_count = Counter(rel_menti)
-    for letter in ment_count.most_common(16):
-        if letter[0] != keyword[0:]:
-            mention_list.append(letter)
-    print('This is common mention \n', *mention_list, sep='\n')
-
-    return mention_list
 
 def read_csv(keyword = None):
+    print("This is read_csv keyword------->",keyword)
     # load csv
     data = pd.read_csv(keyword[1:]+" testing-12.csv")
     return data
@@ -426,6 +372,16 @@ def total_like(data):
     filter_like = like_count.apply(split_it)
     like_sum = filter_like.sum()
     return like_sum
+
+def get_main_sentiment(data):
+    show_sentiment = data['analysis'].value_counts().to_dict()
+    show_sentiment
+    main_sentiment = []
+    for i in show_sentiment:
+        # print(i)
+        main_sentiment.append(i)
+        break
+    return main_sentiment
 
 def get_tagdetail(data):
     # Likes bar chart
@@ -469,8 +425,9 @@ def get_tagdetail(data):
                         labels={'date': 'Date/Time', 'like':'Numbers of Likes'},
                         text="username",
                         template='plotly_dark',
+                        height=550,
                         title="Likes chart based on posts",)
-    new_plot.update_traces(width=0.6, opacity=0.7)
+    new_plot.update_traces(width=0.8, opacity=0.7)
     chart_likes = new_plot.to_html()
 
     return chart_likes
@@ -496,7 +453,7 @@ def get_usercount(data):
                                     hover_name='user_name',
                                     labels={'user_name': 'Name of the user', 'user_freq':'Numbers of users'},
                                     # text="username",
-                                    template='plotly_dark',
+                                    template='plotly_dark',                                    
                                     title="Shown Which user are use # multiple time")
     new_plot_user_analysis.update_traces(width=0.6, opacity=0.7)
     # new_plot_user_analysis.show()
@@ -504,7 +461,7 @@ def get_usercount(data):
     return user_name,user_count,df_user_analysis
 
 def get_OneUserDetails(data,df_user_analysis):
-    stor = df_user_analysis["user_name"][:1].to_list()
+    stor = df_user_analysis["user_name"].to_list()
     one_user_data = data[data['Username'] == stor[0]]
     # one_user_data
     df_for_oneuser_data = pd.DataFrame(one_user_data)
@@ -520,6 +477,7 @@ def get_OneUserDetails(data,df_user_analysis):
     for i in user_data:
         making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
         user_detail_dic.append(making_userdata)
+    stor1 = stor[0]
 
     # plot_one_user_analysis = px.bar(one_user_data,
     #                     x="Created At",
@@ -534,7 +492,7 @@ def get_OneUserDetails(data,df_user_analysis):
     # plot_one_user_analysis.update_traces(width=0.6, opacity=0.7)
     # plot_one_user_analysis.show()
 
-    return user_detail_dic
+    return user_detail_dic,stor1
 
 def get_OneUserDetails_02(data,df_user_analysis):
     stor = df_user_analysis["user_name"].to_list()
@@ -553,8 +511,9 @@ def get_OneUserDetails_02(data,df_user_analysis):
     for i in user_data:
         making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
         user_detail_dic_2.append(making_userdata)
+    stor2 = stor[1]
 
-    return user_detail_dic_2
+    return user_detail_dic_2,stor2
 
 def get_OneUserDetails_03(data,df_user_analysis):
     stor = df_user_analysis["user_name"].to_list()
@@ -573,8 +532,8 @@ def get_OneUserDetails_03(data,df_user_analysis):
     for i in user_data:
         making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
         user_detail_dic_3.append(making_userdata)
-
-    return user_detail_dic_3
+    stor3 = stor[2]
+    return user_detail_dic_3,stor3
 
 def get_OneUserDetails_04(data,df_user_analysis):
     stor = df_user_analysis["user_name"].to_list()
@@ -593,8 +552,8 @@ def get_OneUserDetails_04(data,df_user_analysis):
     for i in user_data:
         making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
         user_detail_dic_4.append(making_userdata)
-
-    return user_detail_dic_4
+    stor4 = stor[3]
+    return user_detail_dic_4,stor4
 
 def get_OneUserDetails_05(data,df_user_analysis):
     stor = df_user_analysis["user_name"].to_list()
@@ -613,8 +572,9 @@ def get_OneUserDetails_05(data,df_user_analysis):
     for i in user_data:
         making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
         user_detail_dic_5.append(making_userdata)
+    stor5 = stor[4]
 
-    return user_detail_dic_5
+    return user_detail_dic_5,stor5
 
 def get_TagSentiment(data):
     # sentiment chart
@@ -624,35 +584,42 @@ def get_TagSentiment(data):
     df_sentiment_analysis["sentiment_freq"] = sentiment.values()
     # df_sentiment_analysis
 
-    plot_sentimen_analysis = px.bar(df_sentiment_analysis,
-                        x="sentiment",
-                        y="sentiment_freq",
-                        # hover_data=['analysis','language'],
-                        color="sentiment",
-                        # hover_name='Username',
-                        # labels={'sentiment': '', 'sentiment_freq':'Numbers of likes'},
-                        # text="Likes/Views",
-                        template='plotly_dark',
-                        title="Showing the sentiments of the all posts.")
-    plot_sentimen_analysis.update_traces(width=0.6, opacity=0.7)
+    # plot_sentimen_analysis = px.bar(df_sentiment_analysis,
+    #                     x="sentiment",
+    #                     y="sentiment_freq",
+    #                     # hover_data=['analysis','language'],
+    #                     color="sentiment",
+    #                     # hover_name='Username',
+    #                     # labels={'sentiment': '', 'sentiment_freq':'Numbers of likes'},
+    #                     # text="Likes/Views",
+    #                     template='plotly_dark',
+    #                     title="Showing the sentiments of the all posts.")
+    # plot_sentimen_analysis.update_traces(width=0.6, opacity=0.7)
     # plot_sentimen_analysis.show()
 
 def show_common_hash(data):
     hash_list = data["Hashtags"].to_list()
+    color_list = ['text-primary','text-info','text-success','text-secondary','text-danger','text-warning']
+    j=0
     look_common_hash = []
     for i in hash_list:
         look_common_hash.extend(eval(i))
     hash_name = []
     hash_count = []
+    color_arr = []
     hash_cont = Counter(look_common_hash)
     # print(hash_conter)
-    for letter, count in hash_cont.most_common(16):
+    for letter, count in hash_cont.most_common(51):
         # if letter != keyword[0:]:
-        # print(letter, count)
-        hash_name.append(str(letter))
-        hash_count.append(str(count))
-    
-    return hash_name, hash_count
+            # print(letter, count)
+            hash_name.append(str(letter))
+            hash_count.append(str(count))
+            color_arr.append(color_list[j-1])
+            if j==len(color_list):
+                j=0
+            else:
+                j+=1
+    return hash_name, hash_count,color_arr
    
 
 #     return chart
@@ -670,5 +637,6 @@ def get_RelatedHashtag(data):
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
     # plt.tight_layout(pad=0)
-    plt.savefig('static/Related_Hash.png',dpi = 200,bbox_inches='tight')    
+    wordcloud.to_file('static/Related_Hash.png')
+    # plt.savefig('static/Related_Hash.jpg',dpi = 500,bbox_inches = 'tight')    
     # plt.show()

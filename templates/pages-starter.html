@@ -6,12 +6,12 @@
 <!-- Mirrored from themesbrand.com/velzon/html/default/dashboard-crm.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 04 Jul 2022 11:32:33 GMT -->
 <head>
     <meta charset="utf-8" />
-    <title>Index | F(x) Hashtag Analyser</title>
+    <title>Home | F(x) Hashtag Analyser</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta name="description" content="Expertise in artificial intelligence, machine learning and full stack web development to small, medium and large enterprises." />
     <meta content="Themesbrand" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="static/images/favicon.ico">
+    <link rel="shortcut icon" href="static/images/favicon.ico" type="image/png">
 
     <link href="static/libs/swiper/swiper-bundle.min.css" rel="stylesheet" type="text/css" />
     <!-- Layout config Js -->
@@ -26,7 +26,6 @@
     <link href="static/css/custom.min.css" rel="stylesheet" type="text/css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
-
 </head>
 
 <body>
@@ -66,8 +65,7 @@
                         <span></span>
                         <span></span>
                     </span>
-                </button>
-                
+                </button>                
 
                 <!-- App Search-->
                 {% comment %} <form class="app-search d-none d-md-block">
@@ -90,7 +88,7 @@
                                         class="mdi mdi-magnify ms-1"></i></a>
                                 <a href="index.html" class="btn btn-soft-secondary btn-sm btn-rounded">buttons <i
                                         class="mdi mdi-magnify ms-1"></i></a>
-                            </div>                            
+                            </div>  
                         </div>                        
                     </div>
                 </form> {% endcomment %}
@@ -225,7 +223,7 @@
                     <ul class="navbar-nav" id="navbar-nav">
                         <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="home" id="search_word" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
+                            <a class="nav-link menu-link" href="#search_word" id="search_word" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
                                 <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Analyser</span>
                             </a>
                             <!-- <div class="collapse menu-dropdown" id="sidebarDashboards">
@@ -262,8 +260,7 @@
                                     </li>
                                     <li class="nav-item">
                                         <a href="contact" class="nav-link" data-key="t-chat"> Contact - Us </a>
-                                    </li>                                 
-                                       
+                                    </li>                                       
                                 </ul>
                             </div>
                         </li>
@@ -291,7 +288,7 @@
 
                     <!-- start page title -->
                     <div class="row">
-                        <h1 class="mt-2 text-info" style="font-size: 55px; color: red; font-weight: bold;">
+                        <h1 class="mt-0 text-info fw-bold" style="font-size: 55px;">
                             <span class="text-warning"> # </span>
                             Hashtag Tracker
                         </h1>
@@ -360,12 +357,12 @@
                             <span class="mdi mdi-close-circle search-widget-icon search-widget-icon-close d-none"
                                 id="search-close-options"></span>
                         </div>                        -->
-                        <div class="row justify-content-left mb-4">
+                        <div class="row justify-content-left mt-2">
                             <div class="col-lg-5">
                                 <div class="row g-3">
                                     <div class="col">
                                         <div class="position-relative mb-3">
-                                            <input type="text" name="search_keyword" href="#search_word" class="form form-control form-control-lg border-info" placeholder="Search here..(#photo)" value="" required>
+                                            <input type="text" name="search_keyword" href="#search_word" class="form form-control form-control-lg border-info" placeholder="Search here..." value="" required>
                                         </div>
                                     </div>
                                     <a class="col-auto">
@@ -519,7 +516,7 @@
                         <div class="card">
                             <div class="row g-0">
                                 <div class="col-md-3">
-                                    <img class="rounded-start img-fluid h-100 object-cover" src="static/images/small/one user chart.jpg" alt="Card image">
+                                    <img class="rounded-start img-fluid h-100 object-cover" src="static/images/small/one_user_chart.jpg" alt="Card image">
                                 </div>
                                 <div class="col-md-9">
                                     <div class="card-header">
@@ -533,6 +530,25 @@
                                 </div>
                             </div>
                         </div><!-- end card -->
+                        <div class="col-xxxl-6">
+                            <div class="card">
+                                <div class="row g-0">
+                                    <div class="col-md-9">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Common Hashtags Counts</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text mb-2 fs-14">It shows, <span class="text fw-semibold">count</span> of the most popular hashtags  & the most popular hashtag mentions                                        
+                                            </p>
+                                            <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <img class="rounded-end img-fluid h-100 object-cover" src="static/images/small/common_tag_count.jpg" alt="Card image">
+                                    </div>
+                                </div>
+                            </div><!-- end card -->
+                        </div>
                     </div>
 
                     
@@ -631,11 +647,11 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <script>document.write(new Date().getFullYear())</script> © Hashtag Analyser.
+                            <script>document.write(new Date().getFullYear())</script> © Hashtag Analyser
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">
-                                Design & Develop by F(x)
+                                Design & Develop by F(x) Data Labs Pvt. Ltd. All rights reserved.
                             </div>
                         </div>
                     </div>
@@ -655,11 +671,11 @@
     </button>
     <!--end back-to-top-->
 
-    <div class="customizer-setting d-none d-md-block">
+    <!-- <div class="customizer-setting d-none d-md-block">
         <div class="btn-info btn-rounded shadow-lg btn btn-icon btn-lg p-2" data-bs-toggle="offcanvas" data-bs-target="#theme-settings-offcanvas" aria-controls="theme-settings-offcanvas">
             <i class='mdi mdi-spin mdi-cog-outline fs-22'></i>
         </div>
-    </div>
+    </div> -->
 
     <!-- Theme Settings -->
     {% comment %} <div class="offcanvas offcanvas-end border-0" tabindex="-1" id="theme-settings-offcanvas">

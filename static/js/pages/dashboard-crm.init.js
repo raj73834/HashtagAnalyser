@@ -27,9 +27,9 @@ var areachartSalesColors = getChartColorsArray("sales-forecast-chart");
 areachartSalesColors &&
     ((options = {
         series: chart_data,
-        chart: { type: "bar", height: 400, toolbar: { show: !1 } },
+        chart: { type: "bar", height: 450, toolbar: { show: !0 } },
         plotOptions: { bar: { horizontal: !1, columnWidth: "60%" } },
-        stroke: { show: !0, width: 5, colors: ["transparent"] },
+        stroke: { show: !0, width: 10, colors: ["transparent"] },
         xaxis: {
             categories: [""],
             axisTicks: { show: !1, borderType: "solid", color: "#78909C", height: 6, offsetX: 0, offsetY: 0 },
@@ -128,7 +128,7 @@ chartStackedBarColors &&
     
     (chart = new ApexCharts(document.querySelector("#one_user_chart"), options)).render()
     );
-    // console.log(one_user_details)
+    // console.log(one_user_details_1)
 
     const changedata = document.getElementById('changeData');
     changedata.addEventListener('change',function(e){
@@ -140,7 +140,7 @@ chartStackedBarColors &&
             one_user_details_4,
             one_user_details_5,
         ]
-        let optionchart = optionArr[currentChart-1]        
+        let optionchart = optionArr[currentChart-1]
 
         document.querySelector("#one_user_chart").innerHTML = '';
         options = chartoption(optionchart)
@@ -149,32 +149,17 @@ chartStackedBarColors &&
     });
 
     function chartoption(option){
-        return {series: option,
-        
-            chart: { type: "bar", height: 400, stacked: false, toolbar: { show: true }, },
-            plotOptions: { bar: { horizontal: false, columnWidth: "60%"} }, // chang in horizontal !0
-            stroke: { show: true, width: 6, colors: ["transparent"] },
+        return {series: option,        
+            chart: { type: "bar", height: 480, stacked: false, toolbar: { show: true }, },
+            plotOptions: { bar: { horizontal: false, columnWidth: '60%'} }, // chang in horizontal !0
+            stroke: { show: true, width: 7, colors: ["transparent"] },
             title: { text: "This is the only one user's details.", style: { fontWeight: 500 } },
-            animations: {
-                enabled: true,
-                easing: 'easeout',
-                speed: 900,
-                animateGradually: {
-                    enabled: true,
-                    delay: 150
-                },
-                dynamicAnimation: {
-                    enabled: true,
-                    speed: 350
-                }
-            },
     
             dataLabels:{
                 style:{
                     colors:['#06333b']
                 }
             },
-
             xaxis: {
                 categories: [""],
     
