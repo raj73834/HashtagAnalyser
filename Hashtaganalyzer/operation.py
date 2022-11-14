@@ -22,6 +22,10 @@ from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 from PIL import Image
 import re
 import os
+import httpx
+import json
+from urllib.parse import quote
+from typing import Optional
 
 
 # def load_insta():
@@ -34,315 +38,256 @@ import os
 #     return driver
 
 
-def open_insta():
-    # display = Display(visible=0, size=(1920,1080))
-    # display.start()
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-    driver.get("http://www.instagram.com")
-    # target username
-    username = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='username']")))
-    password = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='password']")))
-
-    # enter username and password
-    # forthe_fx
-    # sa7x_6R4UNLeVPW
-    # dhyani2250
-    # Fx@2022
-    username.clear()
-    username.send_keys("forthe_fx")
-    password.clear()
-    password.send_keys("sa7x_6R4UNLeVPW")
-    # time.sleep(2)
-    # target the login button and click it
-    button = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))).click()
-    time.sleep(2)
-    alert = WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Not now")]'))).click()
-    alert2 = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[class='_a9-- _a9_1']"))).click()
-
-    return driver
-
-def search_tag(driver=None, keyword=None):
-    # target the search input field
-    searchbox = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//input[@placeholder='Search']")))
-    searchbox.clear()
-
-    # search for the hashtag
-    keyword = keyword
-    searchbox.send_keys(keyword)
-    time.sleep(2)
-    searchbox.send_keys(Keys.ENTER)
-    searchbox.send_keys(Keys.ENTER)
-
-    hashtag_url = 'https://www.instagram.com/explore/tags/'+keyword[1:]+'/'
-    driver.get(hashtag_url)
-
-    return hashtag_url, keyword
-
-def get_totalposts(driver):
-    soup_1 = BeautifulSoup(driver.page_source, "html.parser")
-    post = soup_1.find('header').find('span').text
-    total_post = post.replace(',',"")
-    return total_post
-
-def scroll(driver):
-    time.sleep(1)
-    post_urls = []
-    # Get scroll height
-    last_height = driver.execute_script("return document.body.scrollHeight")
+def scrape_hashtag(hashtag: str, session: httpx.AsyncClient, page_size=12, page_limit:Optional[int] = None):
+    """scrape user's post data"""
+    base_url = "https://www.instagram.com/graphql/query/?query_hash=298b92c8d7cad703f7565aa892ede943&variables="
+    variables = {
+        "tag_name": hashtag,
+        "first": page_size,
+        "after": None,
+    }
+    page = 1
+    # print(base_url + quote(json.dumps(variables)))
     while True:
-        # Scroll down to bottom
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        soup_for_scroll = BeautifulSoup(driver.page_source, "html.parser")
-        # Wait to load page
-        fetch_urls = driver.find_elements_by_xpath("//a[@href]")
-        for url in fetch_urls:
-            post_urls.append(url.get_attribute("href"))
-        new_url = []
-        for url in post_urls:
-            if url.startswith('https://www.instagram.com/p/') and url not in new_url:
-                new_url.append(url)
-        print(len(new_url))
-        if len(new_url) >= 800:
+        result = session.get(base_url + quote(json.dumps(variables)))
+        print(result)
+        hashtag_count = json.loads(result.content)['data']['hashtag']['edge_hashtag_to_media']['count']
+        yield hashtag_count
+        posts = json.loads(result.content)["data"]["hashtag"]["edge_hashtag_to_media"]
+        # print(posts)
+        for post in posts['edges']:
+            yield post["node"]
+        page_info = posts["page_info"]
+        if not page_info["has_next_page"]:
             break
-        # Calculate new scroll height and compare with last scroll height
-        new_height = driver.execute_script("return document.body.scrollHeight")
-        if new_height == last_height:
-            time.sleep(6)
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            second_new_height = driver.execute_script("return document.body.scrollHeight")
-            if second_new_height == last_height:
+        variables["after"] = page_info["end_cursor"]
+        page += 1
+
+def scrape_hashtag_data(keyword=None):
+    scrolled_posts = []
+    keyword = keyword
+    with httpx.Client(timeout=httpx.Timeout(20.0),) as session:
+        for user in scrape_hashtag(hashtag=keyword, session=session):
+            # print(user)
+            scrolled_posts.append(user)
+            if (len(scrolled_posts)>=800):
                 break
-        last_height = new_height
+            if (len(scrolled_posts) >= 500 and len(scrolled_posts) <= 510):
+                print("Wait time is called")
+                time.sleep(15)
+            # if (len(scrolled_posts) >= 600 and len(scrolled_posts) <= 610):
+            #     print("Wait time is called-2")
+            #     time.sleep(10)
+            # break
+    return scrolled_posts, keyword
 
-    return new_url
+def for_url(scrolled_posts):
+    final_url = []
+    for i in range(len(scrolled_posts)):
+        # print(i)
+        if type(scrolled_posts[i]) == dict:
+            data_scroll = scrolled_posts[i].get('shortcode')
+            # print(data_scroll)
+            final_url.append("https://www.instagram.com/p/"+data_scroll)
+        # final_url = set(final_url)
+    return final_url
 
-def get_username(soup):
-    username = soup.find('header').find('span').text
-    if len(username) == 0:
-        username = soup.find('header').findAll('span')
-        username = (username[1].text)
-        if len(username) == 0:
-            username = soup.find('header').findAll('span')
-            username = (username[2].text)
-    # print("username part---",username,'\n')
+def for_like(scrolled_posts):
+    like = []
+    for i in range(len(scrolled_posts)):
+        # print(i)
+        if type(scrolled_posts[i]) == dict:
+            data_like = scrolled_posts[i].get('edge_liked_by').get('count')
+            # print(data_like)
+            like.append(data_like)
+    return like
+
+def for_username(scrolled_posts):
+    import instaloader
+    load = instaloader.Instaloader()
+
+    username = []
+    for i in range(len(scrolled_posts)):
+        data_userid = scrolled_posts[i].get('owner').get('id')
+        data_username = instaloader.Profile.from_id(load.context,data_userid)
+        print(data_username.username)
+        username.append(data_username.username)
     return username
 
-def get_likes(no_like, like, view, df):
-    for l in like:
-        for j in no_like:
-            # print(j)
-            if j.text == "Be the first to like this":
-                # print(j.text)
-                df["Likes/Views"] = "0 like"
-        try:
-            if l.text.endswith("like") and l.text.startswith("#") == False:
-                df["Likes/Views"] = l.text
-        except:
-            pass
-        if l.text.endswith("likes") and l.text.startswith("#") == False:
-            df["Likes/Views"] = l.text
-        elif not l.text.endswith("likes"):
-            for v in view:
-                try:
-                    try:
-                        if v.text.startswith("#"):
-                            v.text = False
-                    except:
-                        pass
-                    if v.text.endswith("views"):
-                        df["Likes/Views"] = v.text
-                except:
-                    pass
-    print("Likes part---", df["Likes/Views"], "\n")
-    return df["Likes/Views"]
+def for_time(scrolled_posts):
+    import time
+    import datetime
+    post_time = []
+    for i in range(len(scrolled_posts)):
+        # print(i)
+        if type(scrolled_posts[i]) == dict:
+            data_timestamp = scrolled_posts[i].get('taken_at_timestamp')
+            timestamp = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime(data_timestamp))
+            post_time.append(timestamp)
+            # print(timestamp)
+    return post_time
 
-
-def get_mentions(mention):
+def for_hashtag_mention(scrolled_posts):
+    import re
+    hashtag = []
     mentions = []
-    for m in mention:
-        if m.text.startswith("@"):
-            mentions.append(m.text)
-        # else:
-        #     if len(mentions) == 0:
-        #         mentions = np.nan
-    # df["Mentions"] = mentions
-    # if len(df["Mentions"]) == 0:
-    #     df["Mentions"] = np.nan
-    # print("Mention part---",df["Mentions"],"\n")
-    return mentions
-
-
-def get_hashtags(hashtag):
-    hashtags = []
-    for h in hashtag:
-        if h.text.startswith("#"):
-            hashtags.append(h.text)
-    # print("hash part---",hashtags,"\n")
-    return hashtags
-
-
-def get_date(soup):
-    created = soup.find(
-        'div', {'class': '_aacl _aacm _aacu _aacy _aad6'}).find('time').text
-    # print("time part---",created,"\n")
-    return created
-
-
-def get_caption(driver, df):
-    soup_any = BeautifulSoup(driver.page_source, "html.parser")
-    try:
-        for i in soup_any.find('ul').findAll('a'):
-            i.decompose()
-        cap = soup_any.find('ul').findAll('span')
-        try:
-            text = "Verified"
-            for j in cap:
-                if (j.string == text):
-                    j.decompose()
-                    # print("this is loop j",j)
-        except:
-            pass
-
-        df["Caption"] = (cap[1].text)
-        # print("This is 1-----",df["Caption"])
-
-        if len(cap[1]) == 0:
-            df['Caption'] = (cap[2].text)
-            # print('This is 2-------',df['Caption'])
-            if len(cap[2]) == 0:
-                df['Caption'] = (cap[3].text)
-                # print('This is 3-------',df['Caption'])
-    except:
-
-        try:
-            for i in soup_any.findAll('ul')[1].findAll('a'):
-                i.decompose()
-            cap_2 = soup_any.findAll('ul')[1].findAll('span')
-
-            df["Caption"] = (cap_2[1].text)
-            # print('This is 4------',df["Caption"])
-            if len(cap_2[1]) == 0:
-                # caption_new_2[2].text
-                df['Caption'] = (cap_2[2].text)
-                # print("this is part 5---",df['caps'])
-        except:
-            pass
-    # print("Caption part---",df["Caption"], "\n")
-    return df["Caption"]
-
-
-def get_parameters(driver, url):
-
-    df = {}
-    # time.sleep(3)
-    driver.get(url)
-    time.sleep(3.5)
-    soup = BeautifulSoup(driver.page_source, "html.parser")
-    anchor = soup.findAll('a')
-    anchor2 = soup.findAll('div')
-    view = soup.findAll('section')
-
-    try:
-        df["URL"] = url
-        df["Username"] = get_username(soup)
-        try:
-            df["Likes/Views"] = get_likes(anchor2, anchor, view, df)
-        except:
-            pass
-            df["Likes/Views"] = '0 likes'
-        df["Mentions"] = get_mentions(anchor)
-        df["Hashtags"] = get_hashtags(anchor)
-        df["Created At"] = get_date(soup)
-        df["Caption"] = get_caption(driver, df)
-    except:
-        pass
-
-    return df, anchor
-
-
-def get_all(list1, driver, keyword):
-    c = 0
-    for url in list1:
-        df, anchor = get_parameters(driver, url)
-
-        captions_value = []
-        try:
-            captions_value.append(df["Caption"])
-        except:
-            pass
-
-        translator = Translator()
-        translated_sentance = []
-        # print('this part is list caption value---------',captions_value)
-        for i in captions_value:
-            print('THIS IS ORIGINAL CAPTIONS-------', i, '\n')
-
-            df['language'] = None
+    # clean_captions = []
+    for i in range(len(scrolled_posts)):
+        if type(scrolled_posts[i]) == dict:
+            # print(i)
+            # '#[a-z0-9_]+'
+            #'(\w+)'
             try:
-                langs = translator.detect(i)
+                data_caption = scrolled_posts[i].get('edge_media_to_caption').get('edges')[0].get('node').get('text')
+                filtered = re.findall('#(\w+)', data_caption)
+                # for hash_filter in filtered:
+                hashtag.append(filtered)
+                mention = re.findall('(@[a-zA-Z0-9_]{1,50})', data_caption)
+                mentions.append(mention)
+            except IndexError:
+                hashtag.append("no hashtags")
+                mentions.append("no mentions")
+            except Exception as e:
+                print(e)
+            
+            # print(data_caption)
+
+            # for iter in filtered:
+            #     data_caption = data_caption.replace(iter, "")
+            # for iter in mention:
+            #     data_caption = data_caption.replace(iter, "")
+            #     clean_captions.append(data_caption)
+    return hashtag,mentions
+
+def for_caption(scrolled_posts):
+    import re,string
+
+    def strip_links(text):
+        link_regex    = re.compile('((https?):((//)|(\\\\))+([\w\d:#@%/;$()~_?\+-=\\\.&](#!)?)*)', re.DOTALL)
+        links         = re.findall(link_regex, text)
+        for link in links:
+            text = text.replace(link[0], ', ')    
+        return text
+
+    def strip_all_entities(text):
+        entity_prefixes = ['@','#']
+        for separator in string.punctuation:
+            if separator not in entity_prefixes :
+                text = text.replace(separator,' ')
+        words = []
+        for word in text.split():
+            word = word.strip()
+            if word:
+                if word[0] not in entity_prefixes:
+                    words.append(word)
+        return ' '.join(words)
+    
+    tests = []
+    # try:
+    for i in range(len(scrolled_posts)):
+        # print(i)
+        if type(scrolled_posts[i]) == dict:
+            try:
+                data_caption = scrolled_posts[i].get('edge_media_to_caption').get('edges')[0].get('node').get('text')
+                tests.append(data_caption)
+            except IndexError:
+                tests.append("no caption")
+                # print(tests)
+            except Exception as e:
+                print(e)
+    # except:
+    #     pass
+    # tests = [
+    #     "@peter I really love that shirt at #Macy. http://bet.ly//WjdiW4",
+    #     "@shawn Titanic tragedy could have been prevented Economic Times: Telegraph.co.ukTitanic tragedy could have been preve... http://bet.ly/tuN2wx",
+    #     "I am at Starbucks http://4sh.com/samqUI (7419 3rd ave, at 75th, Brooklyn)",
+    # ]
+    clean_captions = []
+    for t in tests:
+        clean_texts = strip_all_entities(strip_links(t))
+        # print(clean_texts)
+        clean_captions.append(clean_texts)
+    return clean_captions
+
+def make_dataframe(scrolled_posts):
+    df = pd.DataFrame()
+    df["Url"] = for_url(scrolled_posts)
+    # df["Username"] = for_username()
+    # df["Likes"] = for_like()
+    df["Likes"] = for_like(scrolled_posts)
+    hashtag,mentions = for_hashtag_mention(scrolled_posts)
+    df["Mentions"] = (mentions)
+    df["Hashtags"] = (hashtag)
+    df["Created_at"] = for_time(scrolled_posts)
+    df["Captions"] = (for_caption(scrolled_posts))
+    return df
+
+def translate_and_sentiment(df,keyword):
+    dataframe = []
+    translator = Translator()
+    language = json.load(open("language.json"))
+    for i,j in df.iterrows():
+        # print(i,j)
+        # print(len(j['Captions']))
+        if len(j['Captions']) == 0:
+            j['language'] = 'no caption'
+        else:
+            # j['langguage'] = 'english'
+            # try:
+            try:
+                langs = translator.detect(j['Captions'])
                 print("Language name here", langs.lang)
-                all_lang = googletrans.LANGUAGES
+                all_lang = language
+                # print("This is language full name",all_lang[langs.lang])
                 if type(langs.lang) == str:
-                    df['language'] = all_lang[langs.lang]                    
-                    print("This is str", df['language'])
-
+                    j['language'] = all_lang[langs.lang]
+                    print("This is language full name",all_lang[langs.lang])
                 else:
+                    print("execution going into else part======")
                     lang_list = []
-                    for j in langs.lang:
-                        lang_list.append(all_lang[j])
-                        # print('This is list only',lang_list)
-                        df['language'] = lang_list
-                    print("This is list", df['language'])
-                if not 'language' in df:
-                    df['language'] = 'no detect'
-                print(df["language"])
+                    for l in langs.lang:                        
+                        lang_list.append(all_lang[l])
+                    print('This is multi language',lang_list)
+                    j['language'] = (lang_list)
             except:
                 pass
-            if df['language'] == None:
-                df['language'] = 'no detect'
-
-            df["translate caption"] = None
+            translated_sentance = []
             try:
-                translation = translator.translate(i)
+                translation = translator.translate(j['Captions'])
                 translated_sentance.append(translation.text)
+                # print(translation.text)
                 analyzer = SentimentIntensityAnalyzer()
-                df["translate caption"] = translated_sentance
+                j["translate caption"] = translation.text
             except:
                 pass
-            if df["translate caption"] == None:
-                df["translate caption"] = 'no translate'
+            if len(j['Captions']) == 0:
+                j['translate caption'] = 'No caption'
 
             for s in translated_sentance:
-                print("This is s text------->")
+                # print("This is s text------->")
                 vs = analyzer.polarity_scores(s)
 
-            if vs['compound'] >= 0.05:
-                print(s, '\n', vs, '\n', 'Positive', '\n')
-                df['analysis'] = 'Positive'
-            elif vs['compound'] <= -0.05:
-                print(s, '\n', vs, '\n', 'Negative', '\n')
-                df['analysis'] = 'Negative'
-            else:
-                print(s, '\n', vs, '\n', 'Natural', '\n')
-                df['analysis'] = 'Neutral'
+                if vs['compound'] >= 0.05:
+                    # print(s, '\n', vs, '\n', 'Positive', '\n')
+                    j['analysis'] = 'Positive'
+                elif vs['compound'] <= -0.05:
+                    # print(s, '\n', vs, '\n', 'Negative', '\n')
+                    j['analysis'] = 'Negative'
+                else:
+                    # print(s, '\n', vs, '\n', 'Natural', '\n')
+                    j['analysis'] = 'Neutral'
+        dataframe.append(j)
+    final_df = pd.DataFrame(dataframe)
+    final_df.to_csv(keyword+"_10-11_new_csv_structure_extra_clm.csv")
+        # break
+    return final_df
 
-            data = pd.DataFrame([df])
-            print("This is get_data keyword------->",keyword)
-            if c == 0:
-                data.to_csv(keyword[1:]+' testing-12.csv',mode='a', sep=",", index=False, header=True)
-                c += 1
-            else:
-                data.to_csv(keyword[1:]+' testing-12.csv',mode='a', sep=",", index=False, header=False)
 
-    # new_data =  pd.read_csv(keyword[1:]+' testing.csv')
-    # new_data['related_hash'] = pd.Series(common_hash)
-    # new_data.to_csv(keyword[1:]+'Fianl.csv', mode='a', sep=',', index=False)
-    #         print('%s: %d' % (tag, count))
 
 def read_csv(keyword = None):
     print("This is read_csv keyword------->",keyword)
     # load csv
-    data = pd.read_csv(keyword[1:]+" testing-12.csv")
+    data = pd.read_csv(keyword+"_10-11_new_csv_structure_extra_clm.csv")
     return data
 
 def get_langchart(data):
@@ -364,13 +309,16 @@ def get_langchart(data):
 
     return lang, freq
 
-def split_it(likes):
-    return int("".join(re.findall('\d+', likes)))
+# def split_it(likes):
+#     try:        
+#         return int("".join(re.findall('\d+', likes)))
+#     except:
+#         pass
 
 def total_like(data):
-    like_count = data["Likes/Views"]
-    filter_like = like_count.apply(split_it)
-    like_sum = filter_like.sum()
+    like_count = data["Likes"]
+    # filter_like = like_count
+    like_sum = like_count.sum()
     return like_sum
 
 def get_main_sentiment(data):
@@ -389,13 +337,13 @@ def get_tagdetail(data):
     # time_period = int(input('How many posts data you want to see? :'))
     df_date_like = pd.DataFrame()
     # like_view = data["Likes/Views"].head(time_period)
-    like_view = data["Likes/Views"]
-    like_new = like_view.apply(split_it)
+    like_view = data["Likes"]
+    # like_new = like_view
 
-    df_date_like["like"] = like_new
-    df_date_like["like/view"] = data["Likes/Views"]
-    df_date_like["date"] = data["Created At"]
-    df_date_like["username"] = data['Username']
+    df_date_like["like"] = like_view
+    df_date_like["like/view"] = like_view
+    df_date_like["date"] = data["Created_at"]
+    # df_date_like["username"] = data['Username']
     df_date_like["sentiment"] = data["analysis"]
     df_date_like["languages"] = data["language"]
 
@@ -421,9 +369,9 @@ def get_tagdetail(data):
                         y="like",
                         hover_data=['sentiment'],
                         color="like/view",
-                        hover_name='username',
+                        # hover_name='sentiment',
                         labels={'date': 'Date/Time', 'like':'Numbers of Likes'},
-                        text="username",
+                        # text="username",
                         template='plotly_dark',
                         height=550,
                         title="Likes chart based on posts",)
@@ -439,7 +387,7 @@ def get_usercount(data):
     df_user_analysis["user_name"] = x_user.keys()
     df_user_analysis["user_freq"] = x_user.values()
     # df_user_analysis["check_like"] = data["Likes/Views"]
-    df_user_analysis["time/date"] = data["Created At"]
+    df_user_analysis["time/date"] = data["Created_at"]
     # df_user_analysis
     user_name = list(x_user.keys())
     user_count = list(x_user.values())
