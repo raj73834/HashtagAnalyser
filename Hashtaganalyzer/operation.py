@@ -27,7 +27,7 @@ import json
 from urllib.parse import quote
 from typing import Optional
 
-
+import time
 # def load_insta():
 
 #     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
@@ -38,7 +38,7 @@ from typing import Optional
 #     return driver
 
 
-def scrape_hashtag(hashtag: str, session: httpx.AsyncClient, page_size=12, page_limit:Optional[int] = None):
+def scrape_hashtag(hashtag: str, session: httpx.AsyncClient, page_size=50, page_limit:Optional[int] = None):
     """scrape user's post data"""
     base_url = "https://www.instagram.com/graphql/query/?query_hash=298b92c8d7cad703f7565aa892ede943&variables="
     variables = {
@@ -70,11 +70,11 @@ def scrape_hashtag_data(keyword=None):
         for user in scrape_hashtag(hashtag=keyword, session=session):
             # print(user)
             scrolled_posts.append(user)
-            if (len(scrolled_posts)>=800):
-                break
-            if (len(scrolled_posts) >= 500 and len(scrolled_posts) <= 510):
+            if (len(scrolled_posts) == 600):
                 print("Wait time is called")
-                time.sleep(15)
+                time.sleep(30)
+            if (len(scrolled_posts)>=100):
+                break
             # if (len(scrolled_posts) >= 600 and len(scrolled_posts) <= 610):
             #     print("Wait time is called-2")
             #     time.sleep(10)
@@ -102,28 +102,47 @@ def for_like(scrolled_posts):
             like.append(data_like)
     return like
 
-def for_username(scrolled_posts):
-    import instaloader
-    load = instaloader.Instaloader()
-
-    username = []
-    for i in range(len(scrolled_posts)):
-        data_userid = scrolled_posts[i].get('owner').get('id')
-        data_username = instaloader.Profile.from_id(load.context,data_userid)
-        print(data_username.username)
-        username.append(data_username.username)
-    return username
-
-def for_time(scrolled_posts):
-    import time
-    import datetime
-    post_time = []
+def for_userid(scrolled_posts):
+    userid = []
     for i in range(len(scrolled_posts)):
         # print(i)
         if type(scrolled_posts[i]) == dict:
+            usrid = scrolled_posts[i].get('owner').get('id')
+            # print(data_like)
+            userid.append(usrid)
+        else:
+            pass
+    return userid
+
+# def for_username(scrolled_posts):
+#     import instaloader
+#     load = instaloader.Instaloader()
+
+#     username = []
+#     for i in range(len(scrolled_posts)):
+#         data_userid = scrolled_posts[i].get('owner').get('id')
+#         data_username = instaloader.Profile.from_id(load.context,data_userid)
+#         print(data_username.username)
+#         username.append(data_username.username)
+#     return username
+
+
+
+
+def for_time(scrolled_posts):
+ 
+    post_time = []
+    print("Manual----:",time.localtime(1669362228))
+    for i in range(len(scrolled_posts)):
+        # print(i)        
+        if type(scrolled_posts[i]) == dict:
             data_timestamp = scrolled_posts[i].get('taken_at_timestamp')
+            print("This is GMT timestamp-------------> ",data_timestamp)
+            print("Before conversion----->",time.localtime(int(data_timestamp)))
             timestamp = time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime(data_timestamp))
+            print("This is Local timestamp----------------> ",timestamp)
             post_time.append(timestamp)
+    print("This is stored time stamp local------------>",post_time)
             # print(timestamp)
     return post_time
 
@@ -145,7 +164,7 @@ def for_hashtag_mention(scrolled_posts):
                 mention = re.findall('(@[a-zA-Z0-9_]{1,50})', data_caption)
                 mentions.append(mention)
             except IndexError:
-                hashtag.append("no hashtags")
+                hashtag.append([])
                 mentions.append("no mentions")
             except Exception as e:
                 print(e)
@@ -213,7 +232,7 @@ def make_dataframe(scrolled_posts):
     df = pd.DataFrame()
     df["Url"] = for_url(scrolled_posts)
     # df["Username"] = for_username()
-    # df["Likes"] = for_like()
+    df["Userid"] = for_userid(scrolled_posts)
     df["Likes"] = for_like(scrolled_posts)
     hashtag,mentions = for_hashtag_mention(scrolled_posts)
     df["Mentions"] = (mentions)
@@ -245,7 +264,7 @@ def translate_and_sentiment(df,keyword):
                 else:
                     print("execution going into else part======")
                     lang_list = []
-                    for l in langs.lang:                        
+                    for l in langs.lang:
                         lang_list.append(all_lang[l])
                     print('This is multi language',lang_list)
                     j['language'] = (lang_list)
@@ -278,7 +297,7 @@ def translate_and_sentiment(df,keyword):
                     j['analysis'] = 'Neutral'
         dataframe.append(j)
     final_df = pd.DataFrame(dataframe)
-    final_df.to_csv(keyword+"_10-11_new_csv_structure_extra_clm.csv")
+    final_df.to_csv(keyword+"_10-11_new_csv_structure_extra_clm.csv",index=False)
         # break
     return final_df
 
@@ -288,10 +307,12 @@ def read_csv(keyword = None):
     print("This is read_csv keyword------->",keyword)
     # load csv
     data = pd.read_csv(keyword+"_10-11_new_csv_structure_extra_clm.csv")
+    data['analysis'] = data['analysis'].fillna('Neutral')
+    data['language'] = data['language'].fillna('English')
     return data
 
 def get_langchart(data):
-    # Language charrt
+    # Language charrt    
     x = data['language'].value_counts()
     # x.plot.bar()
     dic = x.to_dict()
@@ -333,45 +354,35 @@ def get_main_sentiment(data):
 
 def get_tagdetail(data):
     # Likes bar chart
-    
+    data['Likes_str'] = data['Likes'].astype(str) + ' like'
+    visualise_df = []
+    for i,j in data.iterrows():
+        j['new_date_time'] = (j['Created_at'][:-6])
+        visualise_df.append(j)
     # time_period = int(input('How many posts data you want to see? :'))
+    visualise_df = pd.DataFrame(visualise_df)
     df_date_like = pd.DataFrame()
     # like_view = data["Likes/Views"].head(time_period)
-    like_view = data["Likes"]
+    like_view = visualise_df["Likes"]
     # like_new = like_view
 
     df_date_like["like"] = like_view
-    df_date_like["like/view"] = like_view
-    df_date_like["date"] = data["Created_at"]
-    # df_date_like["username"] = data['Username']
-    df_date_like["sentiment"] = data["analysis"]
-    df_date_like["languages"] = data["language"]
-
-
-    # df_for_apex =df_date_like['date'].to_list()
-    # df_for_apex_2 =df_date_like['like'].to_list()
-
-    # # likes_data = list(zip(df_for_apex, df_for_apex_2))
-    # # likes_data
-    # likes_data_dic = []
-    # likes_data = list(zip(df_for_apex, df_for_apex_2))
-    # # likes_data
-    # for i in likes_data:
-    #     # print(i)
-    #     likes_data_make = {"name":i[0], "data":[i[1]]}
-    #     # print(likes_data_make)
-    #     likes_data_dic.append(likes_data_make)
-    
+    df_date_like["like/view"] = visualise_df["Likes_str"]
+    df_date_like["date"] = visualise_df["new_date_time"]
+    df_date_like["userid"] = visualise_df["Userid"]
+    df_date_like["sentiment"] = visualise_df["analysis"]
+    df_date_like["languages"] = visualise_df["language"]
+    df_date_like["full_date_time"] = visualise_df["Created_at"]
 
     df_date_like
     new_plot = px.bar(df_date_like,
                         x="date",
                         y="like",
-                        hover_data=['sentiment'],
+                        hover_data=['sentiment','full_date_time'],
                         color="like/view",
-                        # hover_name='sentiment',
+                        hover_name='userid',
                         labels={'date': 'Date/Time', 'like':'Numbers of Likes'},
-                        # text="username",
+                        text="userid",
                         template='plotly_dark',
                         height=550,
                         title="Likes chart based on posts",)
@@ -382,48 +393,49 @@ def get_tagdetail(data):
 
 def get_usercount(data):
     # user frequency chart
-    x_user = data["Username"].value_counts().to_dict()
+    data['userid_str']=data['Userid'].astype(str)
+    x_user = data["userid_str"].value_counts().to_dict()
     df_user_analysis = pd.DataFrame()
-    df_user_analysis["user_name"] = x_user.keys()
+    df_user_analysis["user_id"] = x_user.keys()
     df_user_analysis["user_freq"] = x_user.values()
     # df_user_analysis["check_like"] = data["Likes/Views"]
     df_user_analysis["time/date"] = data["Created_at"]
     # df_user_analysis
-    user_name = list(x_user.keys())
+    user_id = list(x_user.keys())
     user_count = list(x_user.values())
 
 
     new_plot_user_analysis = px.bar(df_user_analysis,
-                                    x="user_name",
+                                    x="user_id",
                                     y="user_freq",
                                     # hover_data=['time/date'],
                                     color="user_freq",
-                                    hover_name='user_name',
-                                    labels={'user_name': 'Name of the user', 'user_freq':'Numbers of users'},
+                                    hover_name='user_id',
+                                    labels={'user_id': 'Name of the user', 'user_freq':'Numbers of users'},
                                     # text="username",
-                                    template='plotly_dark',                                    
+                                    template='plotly_dark',
                                     title="Shown Which user are use # multiple time")
     new_plot_user_analysis.update_traces(width=0.6, opacity=0.7)
     # new_plot_user_analysis.show()
 
-    return user_name,user_count,df_user_analysis
+    return user_id,user_count,df_user_analysis
 
 def get_OneUserDetails(data,df_user_analysis):
-    stor = df_user_analysis["user_name"].to_list()
-    one_user_data = data[data['Username'] == stor[0]]
+    stor = df_user_analysis["user_id"].astype(int).to_list()
+    one_user_data = data[data['Userid'] == stor[0]]
     # one_user_data
     df_for_oneuser_data = pd.DataFrame(one_user_data)
 
-    for_user_apex_0 = df_for_oneuser_data['Username'].to_list()
-    for_user_apex_1 = df_for_oneuser_data['Created At'].to_list()
-    for_user_apex_2 = df_for_oneuser_data['Likes/Views'].to_list()
+    for_user_apex_0 = df_for_oneuser_data['Userid'].to_list()
+    for_user_apex_1 = df_for_oneuser_data['Created_at'].to_list()
+    for_user_apex_2 = df_for_oneuser_data['Likes_str'].to_list()
     for_user_apex_3 = df_for_oneuser_data['analysis'].to_list()
     for_user_apex_4 = df_for_oneuser_data['language'].to_list()
 
     user_detail_dic = []
     user_data = list(zip(for_user_apex_0, for_user_apex_1,for_user_apex_2,for_user_apex_3,for_user_apex_4))
     for i in user_data:
-        making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
+        making_userdata = {"name":i[1],"data":[{'userid':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
         user_detail_dic.append(making_userdata)
     stor1 = stor[0]
 
@@ -443,82 +455,82 @@ def get_OneUserDetails(data,df_user_analysis):
     return user_detail_dic,stor1
 
 def get_OneUserDetails_02(data,df_user_analysis):
-    stor = df_user_analysis["user_name"].to_list()
-    one_user_data = data[data['Username'] == stor[1]]
+    stor = df_user_analysis["user_id"].astype(int).to_list()
+    one_user_data = data[data['Userid'] == stor[1]]
     # one_user_data
     df_for_oneuser_data = pd.DataFrame(one_user_data)
 
-    for_user_apex_0 = df_for_oneuser_data['Username'].to_list()
-    for_user_apex_1 = df_for_oneuser_data['Created At'].to_list()
-    for_user_apex_2 = df_for_oneuser_data['Likes/Views'].to_list()
+    for_user_apex_0 = df_for_oneuser_data['Userid'].to_list()
+    for_user_apex_1 = df_for_oneuser_data['Created_at'].to_list()
+    for_user_apex_2 = df_for_oneuser_data['Likes_str'].to_list()
     for_user_apex_3 = df_for_oneuser_data['analysis'].to_list()
     for_user_apex_4 = df_for_oneuser_data['language'].to_list()
 
     user_detail_dic_2 = []
     user_data = list(zip(for_user_apex_0, for_user_apex_1,for_user_apex_2,for_user_apex_3,for_user_apex_4))
     for i in user_data:
-        making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
+        making_userdata = {"name":i[1],"data":[{'userid':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
         user_detail_dic_2.append(making_userdata)
     stor2 = stor[1]
 
     return user_detail_dic_2,stor2
 
 def get_OneUserDetails_03(data,df_user_analysis):
-    stor = df_user_analysis["user_name"].to_list()
-    one_user_data = data[data['Username'] == stor[2]]
+    stor = df_user_analysis["user_id"].astype(int).to_list()
+    one_user_data = data[data['Userid'] == stor[2]]
     # one_user_data
     df_for_oneuser_data = pd.DataFrame(one_user_data)
 
-    for_user_apex_0 = df_for_oneuser_data['Username'].to_list()
-    for_user_apex_1 = df_for_oneuser_data['Created At'].to_list()
-    for_user_apex_2 = df_for_oneuser_data['Likes/Views'].to_list()
+    for_user_apex_0 = df_for_oneuser_data['Userid'].to_list()
+    for_user_apex_1 = df_for_oneuser_data['Created_at'].to_list()
+    for_user_apex_2 = df_for_oneuser_data['Likes_str'].to_list()
     for_user_apex_3 = df_for_oneuser_data['analysis'].to_list()
     for_user_apex_4 = df_for_oneuser_data['language'].to_list()
 
     user_detail_dic_3 = []
     user_data = list(zip(for_user_apex_0, for_user_apex_1,for_user_apex_2,for_user_apex_3,for_user_apex_4))
     for i in user_data:
-        making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
+        making_userdata = {"name":i[1],"data":[{'userid':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
         user_detail_dic_3.append(making_userdata)
     stor3 = stor[2]
     return user_detail_dic_3,stor3
 
 def get_OneUserDetails_04(data,df_user_analysis):
-    stor = df_user_analysis["user_name"].to_list()
-    one_user_data = data[data['Username'] == stor[3]]
+    stor = df_user_analysis["user_id"].astype(int).to_list()
+    one_user_data = data[data['Userid'] == stor[3]]
     # one_user_data
     df_for_oneuser_data = pd.DataFrame(one_user_data)
 
-    for_user_apex_0 = df_for_oneuser_data['Username'].to_list()
-    for_user_apex_1 = df_for_oneuser_data['Created At'].to_list()
-    for_user_apex_2 = df_for_oneuser_data['Likes/Views'].to_list()
+    for_user_apex_0 = df_for_oneuser_data['Userid'].to_list()
+    for_user_apex_1 = df_for_oneuser_data['Created_at'].to_list()
+    for_user_apex_2 = df_for_oneuser_data['Likes_str'].to_list()
     for_user_apex_3 = df_for_oneuser_data['analysis'].to_list()
     for_user_apex_4 = df_for_oneuser_data['language'].to_list()
 
     user_detail_dic_4 = []
     user_data = list(zip(for_user_apex_0, for_user_apex_1,for_user_apex_2,for_user_apex_3,for_user_apex_4))
     for i in user_data:
-        making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
+        making_userdata = {"name":i[1],"data":[{'userid':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
         user_detail_dic_4.append(making_userdata)
     stor4 = stor[3]
     return user_detail_dic_4,stor4
 
 def get_OneUserDetails_05(data,df_user_analysis):
-    stor = df_user_analysis["user_name"].to_list()
-    one_user_data = data[data['Username'] == stor[4]]
+    stor = df_user_analysis["user_id"].astype(int).to_list()
+    one_user_data = data[data['Userid'] == stor[4]]
     # one_user_data
     df_for_oneuser_data = pd.DataFrame(one_user_data)
 
-    for_user_apex_0 = df_for_oneuser_data['Username'].to_list()
-    for_user_apex_1 = df_for_oneuser_data['Created At'].to_list()
-    for_user_apex_2 = df_for_oneuser_data['Likes/Views'].to_list()
+    for_user_apex_0 = df_for_oneuser_data['Userid'].to_list()
+    for_user_apex_1 = df_for_oneuser_data['Created_at'].to_list()
+    for_user_apex_2 = df_for_oneuser_data['Likes_str'].to_list()
     for_user_apex_3 = df_for_oneuser_data['analysis'].to_list()
     for_user_apex_4 = df_for_oneuser_data['language'].to_list()
 
     user_detail_dic_5 = []
     user_data = list(zip(for_user_apex_0, for_user_apex_1,for_user_apex_2,for_user_apex_3,for_user_apex_4))
     for i in user_data:
-        making_userdata = {"name":i[1],"data":[{'username':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
+        making_userdata = {"name":i[1],"data":[{'userid':i[0],'x':i[1],'y':i[2],'sentiment':i[3],'language':i[4]}]}
         user_detail_dic_5.append(making_userdata)
     stor5 = stor[4]
 

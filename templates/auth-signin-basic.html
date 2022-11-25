@@ -48,7 +48,7 @@
                     <div class="col-lg-12">
                         <div class="text-center mt-sm-5 mb-4 text-white-50">
                             <div>
-                                <a href="index.html" class="d-inline-block auth-logo">
+                                <a href="{% url 'index' %}" class="d-inline-block auth-logo">
                                     <img src="static/images/logo-sm.png" alt="" height="50">
                                 </a>
                             </div>
@@ -82,10 +82,12 @@
                                             <div class="float-end">
                                                 <a href="{% url 'forget-pass' %}" class="text-primary">Forgot password?</a>
                                             </div>
+                                        </div>
+                                        <div class="mb-3">
                                             <label class="form-label" for="password-input">Password</label>
                                             <div class="position-relative auth-pass-inputgroup mb-3">
-                                                <input type="password" class="form-control pe-5" placeholder="Enter password" name = "pass_word" id="password-input" required>
-                                                <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
+                                                <input type="password" class="form-control pe-5 password-input" placeholder="Enter password" name = "pass_word" id="password-input" required>
+                                                <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button"><i class="ri-eye-fill align-middle"></i></button>
                                                 <div class="invalid-feedback">
                                                     Please enter password
                                                 </div>
@@ -172,7 +174,7 @@
     <!-- particles app js -->
     <script src="static/js/pages/particles.app.js"></script>
     <!-- password-addon init -->
-    <script src="static/js/pages/password-addon.init.js"></script>
+    <script src="static/js/pages/passowrd-create.init.js"></script>
 </body>
 
 
