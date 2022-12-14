@@ -139,6 +139,7 @@ chartStackedBarColors &&
             one_user_details_3,
             one_user_details_4,
             one_user_details_5,
+            // console.log(one_user_details_1)
         ]
         let optionchart = optionArr[currentChart-1]
 
@@ -182,7 +183,7 @@ chartStackedBarColors &&
                   var data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
                   
                   return '<ul>' +
-                  '<li><b>Username</b>: ' + data.username + '</li>' +
+                  '<li><b>Userid</b>: ' + data.userid + '</li>' +
                   '<li><b>Time</b>: ' + data.x + '</li>' +
                   '<li><b>Number of Likes</b>: ' + data.y + '</li>' +
                   '<li><b>Sentiments</b>: ' + data.sentiment + '</li>' +

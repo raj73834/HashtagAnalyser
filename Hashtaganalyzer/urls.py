@@ -6,6 +6,7 @@ from . import views
 
 urlpatterns = [
     path('signup', views.handlesignup, name='signup'),
+    path('signup_otp', views.confirm_signup_otp, name='signup_otp'),
     path("send_otp",views.send_otp,name="send otp"),
     path('login',views.login, name='login'),
     path('forget-pass',views.forget_pass, name='forget-pass'),
