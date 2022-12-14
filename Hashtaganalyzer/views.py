@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.contrib.auth.models import User,auth
 from django.core.mail import send_mail
-import math, random
+import math, random, json
 
 # from .models import ItemsModel
 # from .serializers import ItemSerializer
@@ -35,17 +35,21 @@ def generateOTP() :
 @csrf_exempt
 def send_otp(request):
     if request.method == "POST":
+        d = json.loads(request.body)
+        print(d)
     
-        useremail=request.POST.get("useremail")
+        useremail=d.get("useremail")
         print(useremail)
-        if User.objects.filter(email=useremail).first():
-            messages.error(request,'Email is already taken')
-            print("This Email is already has been taken")
-            return redirect("signup")
+        if User.objects.filter(email=useremail).exists():
+            # messages.error(request,'Email is already taken')
+            print("This Email is already has been taken send otp")
+            raise Exception("Func are calling")
         else:
             o=generateOTP()
+            request.session['sent_signup_Otp'] = o
+            # print("Signup OTP---",request.session['sent_signup_Otp'])
             htmlgen = '<p>Your OTP is <strong>'+o+'</strong></p>'
-            send_mail('OTP request',o,'peterjenim23@gmail.com',[useremail],fail_silently=False,html_message=htmlgen)           
+            send_mail('OTP request',o,'peterjenim23@gmail.com',[useremail],fail_silently=False,html_message=htmlgen)
             return HttpResponse(o)
     else:
         return render(request, "auth-signup-basic.html")
@@ -58,10 +62,10 @@ def handlesignup(request):
         username = request.POST.get("user_name")
         useremail = request.POST.get("user_email")
         password = request.POST.get("password")
-
+        print('THis is handlesignup outcome output',useremail)
         if User.objects.filter(username=username).exists():
             messages.error(request,'Username is already taken')
-            print("This Username is already has been taken")
+            print("This Username is already has been taken handlesignup")
             return redirect("signup")
         elif User.objects.filter(email=useremail).exists():
             messages.error(request,'Email is already taken')
@@ -76,11 +80,25 @@ def handlesignup(request):
         return render(request, "auth-signup-basic.html")
 
 @csrf_exempt
+def confirm_signup_otp(request):
+    if request.method == "POST":
+        sent_signup_otp = request.session['sent_signup_Otp']
+        d = json.loads(request.body)
+        entered_otp = d.get('otp')
+        # print("This is user write OTP here",entered_otp, sent_signup_otp)        
+        if entered_otp == sent_signup_otp:
+            return HttpResponse('success')
+        else:
+            # messages.error(request,'enter valid OTP!')
+            raise Exception("OTP exception raise------------------")
+
+    # return render(request,'enter-otp.html')
+
+@csrf_exempt
 def login(request):
     if request.method == "POST":
         username = request.POST.get('user_name')
-        password = request.POST.get("pass_word")
-        
+        password = request.POST.get("pass_word")        
         user = auth.authenticate(username = username, password = password)
         
         if user is not None:
@@ -132,7 +150,7 @@ def forget_pass(request):
         else:
             messages.error(request,'enter valid email!')
             print("Not receive valid email!")
-            return redirect("forget")
+            return redirect("forget-pass")
     else:
         return render(request,'auth-pass-reset-basic.html')
 
@@ -152,7 +170,7 @@ def confirm_otp(request):
         if entered_otp == sent_otp:
             return redirect('pass-confirm')
         else:
-            messages.error(request,'enter valid OTP!')            
+            messages.error(request,'enter valid OTP!')
            
 
     return render(request,'enter-otp.html')
@@ -169,10 +187,10 @@ def confirm_pass(request):
                 u.save()
                 return redirect('login')
             else:
-                messages.error(request,'enter same password')            
+                messages.error(request,'enter same password')
                 return redirect('pass-confirm')
         else:
-            messages.error(request,'Please enter same password')            
+            messages.error(request,'Please enter same password')
             return redirect('pass-confirm')
     return render(request,'auth-pass-change-basic.html')
 
@@ -200,23 +218,22 @@ def contact_us(request):
 @csrf_exempt
 def index(request):
 
-    # searched_word = ''
-    # if request.method == "POST":
-    #     searched_word = request.POST.get('search_keyword')
-    #     print(searched_word)
-
-    # scrolled_posts, keyword = scrape_hashtag_data(keyword=searched_word)
-    # print("This is search keyword here---",keyword)
-    # ttl_post = scrolled_posts[0]
-    # df = make_dataframe(scrolled_posts)
-    # translate_and_sentiment(df,keyword)
-
+    searched_word = ''
+    if request.method == "POST":
+        searched_word = request.POST.get('search_keyword')
+        print(searched_word)
+    try:
+        scrolled_posts, keyword = scrape_hashtag_data(keyword=searched_word)
+        print("This is search keyword here---",keyword)
+        ttl_post = scrolled_posts[0]
+        df = make_dataframe(scrolled_posts)
+        translate_and_sentiment(df,keyword)
+    except:
+        pass
     """This is old code"""
     # try:
     #     driver=open_insta()
-
     #     hashtag_url, keyword = search_tag(driver=driver, keyword='#'+searched_word)
-
     #     driver.get(hashtag_url)
     #     print(hashtag_url)
     #     new_url = scroll(driver)
@@ -228,17 +245,17 @@ def index(request):
     #     get_all(new_url,driver,keyword)
     # except:
     #     pass
-    keyword = 'diwali'
+    # keyword = 'phirseziddkar'
     data = read_csv(keyword)
     like_sum = total_like(data)
     lang, freq = get_langchart(data=data)
     chart_likes = get_tagdetail(data=data)
-    # user_name,user_count,df_user_analysis = get_usercount(data)
-    # user_detail_dic,stor1 = get_OneUserDetails(data,df_user_analysis)
-    # user_detail_dic_2,stor2 = get_OneUserDetails_02(data,df_user_analysis)
-    # user_detail_dic_3,stor3 = get_OneUserDetails_03(data,df_user_analysis)
-    # user_detail_dic_4,stor4 = get_OneUserDetails_04(data,df_user_analysis)
-    # user_detail_dic_5,stor5 = get_OneUserDetails_05(data,df_user_analysis)
+    user_id,user_count,df_user_analysis = get_usercount(data)
+    user_detail_dic,stor1 = get_OneUserDetails(data,df_user_analysis)
+    user_detail_dic_2,stor2 = get_OneUserDetails_02(data,df_user_analysis)
+    user_detail_dic_3,stor3 = get_OneUserDetails_03(data,df_user_analysis)
+    user_detail_dic_4,stor4 = get_OneUserDetails_04(data,df_user_analysis)
+    user_detail_dic_5,stor5 = get_OneUserDetails_05(data,df_user_analysis)
     hash_name,hash_count,color_arr = show_common_hash(data)
     main_sentiment = get_main_sentiment(data)
     # get_TagSentiment(data=data)
@@ -258,14 +275,13 @@ def index(request):
     #     user_freq_data.append(dict_2)
     
 
-    ttl_post = '6535924'
+    # ttl_post = '6920'
     # searched_word = 'ganeshvisarjan'
     # print(user_detail_dic)
-    d={"post":ttl_post,"hashtag":keyword, "likes":like_sum,"chart_likes":chart_likes,"main_sentiment":main_sentiment[0],
-    'new_list': new_list,'lang':lang,'freq':freq,'hash_name_count':zip(hash_name,hash_count,color_arr)}
-    """'user_name':user_name[:15],'user_count':user_count[:15],'one_user_data':user_detail_dic,
-    'one_user_data_2':user_detail_dic_2,'one_user_data_3':user_detail_dic_3,'one_user_data_4':user_detail_dic_4,
-    'one_user_data_5':user_detail_dic_5,'user1':stor1,'user2':stor2,'user3':stor3,'user4':stor4,'user5':stor5,"""
+    d={"post":ttl_post,"hashtag":searched_word, "likes":like_sum,"chart_likes":chart_likes,"main_sentiment":main_sentiment[0],
+    'new_list': new_list,'lang':lang,'freq':freq,'hash_name_count':zip(hash_name,hash_count,color_arr),'user_id':user_id[:15],'user_count':user_count[:15],
+    'one_user_data':user_detail_dic,'one_user_data_2':user_detail_dic_2,'one_user_data_3':user_detail_dic_3,'one_user_data_4':user_detail_dic_4,    
+    'one_user_data_5':user_detail_dic_5,'user1':stor1,'user2':stor2,'user3':stor3,'user4':stor4,'user5':stor5}
     
     # 'hash_name1':hash_name[0],
     # 'hash_count1':hash_count[0]
